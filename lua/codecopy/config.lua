@@ -1,11 +1,15 @@
 local M = {}
 
 --- Default configuration for CodeCopy.
--- @field notify
+-- @field keymap string
+-- @field notify boolean
+-- @field include_file_path boolean
+-- @field debug boolean
 M.defaults = {
 	keymap = "<leader>cc",
 	notify = false,
 	include_file_path = false,
+	debug = false,
 }
 M.options = vim.deepcopy(M.defaults)
 
@@ -26,6 +30,11 @@ end
 function M.toggle_include_file_path()
 	M.options.include_file_path = not M.options.include_file_path
 	vim.notify("Include File Path: " .. (M.options.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
+end
+
+function M.toggle_debug()
+	M.options.debug = not M.options.debug
+	vim.notify("Debug: " .. (M.options.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
 end
 
 return M
