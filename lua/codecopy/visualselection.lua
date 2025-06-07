@@ -6,14 +6,18 @@ local linecount = 0
 local function get_visual_selection()
 	local _, start_row, start_col, _ = unpack(vim.fn.getpos("'<"))
 	local _, end_row, end_col, _ = unpack(vim.fn.getpos("'>"))
-	-- -1 indexing adjustment
+	-- 0 indexing adjustment
 	start_row = start_row - 1
 
 	local lines = vim.api.nvim_buf_get_lines(0, start_row, end_row, false)
-	vim.notify("{[" .. start_row .. ", " .. start_col .. "], [" .. end_row ..  "," .. end_col .. "]} : (" .. linecount .. ")", vim.log.levels.WARN, { title = "CodeCopy: DEBUG" })
+	if options.debug then
+		vim.notify("{[" .. start_row .. ", " .. start_col .. "], [" .. end_row ..  "," .. end_col .. "]} : (" .. linecount .. ")", vim.log.levels.WARN, { title = "CodeCopy: DEBUG" })
+	end
 	linecount = #lines
 	if #lines == 0 then
-		vim.notify("Failed to get lines. {<" .. start_row .. ", " .. start_col .. ">, <".. end_row .. end_col .. ">} : (" .. linecount .. ")", vim.log.levels.ERROR, { title = "CodeCopy: Error" })
+		if options.debug then
+			vim.notify("Failed to get lines. {<" .. start_row .. ", " .. start_col .. ">, <".. end_row .. end_col .. ">} : (" .. linecount .. ")", vim.log.levels.ERROR, { title = "CodeCopy: DEBUG" })
+		end
 		return ""
 	end
 
