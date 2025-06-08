@@ -2,20 +2,70 @@ local M = {}
 
 --- Default configuration for CodeCopy.
 -- @field keymap string
+-- @field code_fence boolean
 -- @field notify boolean
 -- @field include_file_path boolean
 -- @field debug boolean
+-- @field lang_map table
 M.defaults = {
 	keymap = "<leader>cc",
+	code_fence = true,
 	notify = false,
 	include_file_path = false,
 	debug = false,
+	lang_map = {
+		["ahk"]   = "ahk",
+		["bash"]  = "bash",
+		["bat"]   = "bat",
+		["c"]     = "c",
+		["c++"]   = "cpp",
+		["cc"]    = "cpp",
+		["cmd"]   = "bat",
+		["cpp"]   = "cpp",
+		["css"]   = "css",
+		["cxx"]   = "cpp",
+		["diff"]  = "diff",
+		["go"]    = "go",
+		["h++"]   = "cpp",
+		["hh"]    = "cpp",
+		["hpp"]   = "cpp",
+		["htm"]   = "html",
+		["html"]  = "html",
+		["xhtml"] = "html",
+		["hxx"]   = "cpp",
+		["ini"]   = "ini",
+		["java"]  = "java",
+		["js"]    = "javascript",
+		["lua"]   = "lua",
+		["md"]    = "markdown",
+		["patch"] = "diff",
+		["py"]    = "python",
+		["rust"]  = "rust",
+		["sh"]    = "bash",
+		["ts"]    = "typescript",
+		["zsh"]   = "zsh",
+		["php"]   = "php",
+		["blade"] = "html",
+		["text"]  = "txt",
+		["vim"]   = "vim",
+		["xml"]   = "xml",
+		["xsl"]   = "xml",
+		["yaml"]  = "yaml",
+		["yml"]   = "yaml",
+	}
 }
 M.options = vim.deepcopy(M.defaults)
 
 --- Sets up the config for CodeCopy.
 function M.setup(opts)
 	M.options = vim.tbl_deep_extend("force", vim.deepcopy(M.defaults), opts or {})
+end
+
+--- Toggles code fencing.
+-- Flips `config.code_fence` between true and false.
+function M.toggle_code_fence()
+	M.options.code_fence = not M.options.code_fence
+	vim.notify("Code Fencing: " .. (M.options.code_fence and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
 end
 
 --- Toggles the notification setting.
