@@ -1,5 +1,7 @@
 .log/
 *.log
 
+test.*
+
 .env
 
