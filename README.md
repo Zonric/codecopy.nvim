@@ -28,14 +28,14 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
     lazy = true,
     event = "VeryLazy",
     opts = { -- Default Configs
-    -- sets Default keymap for ("codecopy.visualselection").copy() using built in user command `CodeCopy`
+    -- sets Default keymap for ("codecopy.visualselection").copy() using built in user command `:CodeCopy`
         keymap = "<leader>cc",
         code_fence = true,
         notify = false,
         include_file_path = false,
         debug = false,
         lang_map = {
-            ["py"] = "python", -- see included lang_map for default
+            ["py"] = "python", -- :see below: For default lang_map
         },
     },
 }
