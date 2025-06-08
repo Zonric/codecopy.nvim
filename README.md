@@ -24,17 +24,18 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 {
     "Zonric/codecopy.nvim",
     branch = "master",
-    enabled = false,
+    enabled = true,
     lazy = true,
     event = "VeryLazy",
-    opts = {
+    opts = { -- Default Configs
+    -- sets Default keymap for ("codecopy.visualselection").copy() using built in user command `CodeCopy`
         keymap = "<leader>cc",
         code_fence = true,
         notify = false,
         include_file_path = false,
         debug = false,
         lang_map = {
-            ["<FILEEXT>"] = "<MARKDOWN_LANGUAGE>",
+            ["py"] = "python", -- see included lang_map for default
         },
     },
 }
