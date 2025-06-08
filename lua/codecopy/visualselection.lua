@@ -112,9 +112,13 @@ function M.copy()
 	if options.include_file_path then
 		text = text .. "### " .. fname .. "\n\n"
 	end
-	text = text .. "```" .. vim.fn.fnamemodify(fname, ":e") .. "\n"
+	if options.code_fence then
+		text = text .. "```" .. vim.fn.fnamemodify(fname, ":e") .. "\n"
+	end
 	text = text .. get_visual_selection()
-	text = text .. "\n```"
+	if options.code_fence then
+		text = text .. "\n```"
+	end
 
 	-- set reg
 	vim.fn.setreg("+", text)
