@@ -57,17 +57,20 @@ local function get_visual_selection()
 		if #lines > 1 then
 			lines[#lines] = string.sub(lines[#lines], 0, end_pos[3])
 		end
-	-- Visual by box selection ( Bottom->Up and/or Left->Right Inversion Checks)
+	-- Visual by box selection (Check for shorter than end column position)
 	elseif vimode == "\22" then
 		-- Trim all lines to the vistual block
 		for i, line in ipairs(lines) do
-			if i == 1 then
-				lines[1] = string.sub(lines[1], start_pos[3], end_pos[3]+1)
-			else
-				lines[i] = string.sub(line, start_pos[3]-1, end_pos[3])
+			local linelength = vim.fn.strdisplaywidth(line)
+			-- Padding for lines over-cut by the slice
+			if linelength < end_pos[3] then
+				lines[i] = lines[i] .. string.rep(" ", end_pos[3] - linelength)
 			end
+			-- Time for the trim...
+			lines[i] = string.sub(lines[i], start_pos[3], end_pos[3])
 		end
 	end
+	-- Debug output
 	if options.debug then
 		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.WARN, { title = "CodeCopy Debug:"})
 	end
@@ -105,8 +108,6 @@ function M.copy()
 	text = text .. "\n```"
 
 	-- set reg
-	vim.fn.setreg("+", "")
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
 	vim.fn.setreg("+", text)
 	-- flush feedkeys or reg will be a step behind.
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
