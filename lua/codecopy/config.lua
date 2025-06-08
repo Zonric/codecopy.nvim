@@ -5,11 +5,52 @@ local M = {}
 -- @field notify boolean
 -- @field include_file_path boolean
 -- @field debug boolean
+-- @field lang_map table
 M.defaults = {
 	keymap = "<leader>cc",
 	notify = false,
 	include_file_path = false,
 	debug = false,
+	lang_map = {
+		["ahk"]   = "ahk",
+		["bash"]  = "bash",
+		["bat"]   = "bat",
+		["c"]     = "c",
+		["c++"]   = "cpp",
+		["cc"]    = "cpp",
+		["cmd"]   = "bat",
+		["cpp"]   = "cpp",
+		["css"]   = "css",
+		["cxx"]   = "cpp",
+		["diff"]  = "diff",
+		["go"]    = "go",
+		["h++"]   = "cpp",
+		["hh"]    = "cpp",
+		["hpp"]   = "cpp",
+		["htm"]   = "html",
+		["html"]  = "html",
+		["xhtml"] = "html",
+		["hxx"]   = "cpp",
+		["ini"]   = "ini",
+		["java"]  = "java",
+		["js"]    = "javascript",
+		["lua"]   = "lua",
+		["md"]    = "markdown",
+		["patch"] = "diff",
+		["py"]    = "python",
+		["rust"]  = "rust",
+		["sh"]    = "bash",
+		["ts"]    = "typescript",
+		["zsh"]   = "zsh",
+		["php"]   = "php",
+		["blade"] = "html",
+		["text"]  = "txt",
+		["vim"]   = "vim",
+		["xml"]   = "xml",
+		["xsl"]   = "xml",
+		["yaml"]  = "yaml",
+		["yml"]   = "yaml",
+	}
 }
 M.options = vim.deepcopy(M.defaults)
 

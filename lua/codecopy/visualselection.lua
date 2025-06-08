@@ -87,6 +87,10 @@ local function get_visual_selection()
 	return table.concat(lines, "\n")
 end
 
+local function get_lang_by_ext(file_ext)
+	return options.lang_map[file_ext] or ""
+end
+
 --- `copy()` gets your visual selection, fences it with simple
 -- markdown codeblocks adds the lang based on the file ext,
 -- and sets it to register '+'.
@@ -108,11 +112,13 @@ end
 -- ````
 function M.copy()
 	local fname = vim.api.nvim_buf_get_name(0)
+	local fext = vim.fn.fnamemodify(fname, ":e")
+	local lang = get_lang_by_ext(fext)
 	local text = ""
 	if options.include_file_path then
 		text = text .. "### " .. fname .. "\n\n"
 	end
-	text = text .. "```" .. vim.fn.fnamemodify(fname, ":e") .. "\n"
+	text = text .. "```" .. lang  .. "\n"
 	text = text .. get_visual_selection()
 	text = text .. "\n```"
 
