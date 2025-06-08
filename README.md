@@ -7,7 +7,8 @@ A simple Neovim plugin to copy visually selected text to the system clipboard �
 ## ✨ Features
 
 - 📦 Copy visual selection to clipboard
-- 💻 Wrap in code fences (e.g., \`\`\`lua)
+- 💻 Wrap in code fences (e.g., \`\`\`lua )
+- 🗺️ Optional header displaying file path (e.g., `### /some/file.ext` )
 - 🔔 Optional notifications
 - 🔧 User-configurable options and keymaps
 - ⚙️ Expandable dynamic language detection
@@ -64,28 +65,36 @@ In visual mode, select some text and press `<leader>cc` (or your custom mapping)
 The text will be copied to the system clipboard, wrapped in:
 
 \`\`\`lua
-<your visual selection>
+...
+   your visual selection
+...
 \`\`\`
 
-If you want to copy plain text, you can toggle codecopy.toggle_codeblock() on the fly.
+If you want to copy plain text, you can toggle ("codecopy.config").toggle_code_fence() on the fly.
 
 ---
 
 🔧 API
 
-| Function                                                | Description                  |
-|---------------------------------------------------------|------------------------------|
-| `require("codecopy").copy()`                            | Manually trigger copy        |
-| `require("codecopy.config").toggle_code_fence()`        | Toggle code block wrapping   |
-| `require("codecopy.config").toggle_notify()`            | Toggle copy notifications    |
-| `require("codecopy.config").toggle_include_file_path()` | Toggle displaying file path. |
-| `require("codecopy.config").toggle_debug()`             | Toggle debut notifications.  |
+| Function                                                | Description                  | Modes   |
+|---------------------------------------------------------|------------------------------|---------|
+| `require("codecopy.visualselection").copy()`            | Manually trigger copy.       | "v"     |
+| `require("codecopy.config").toggle_code_fence()`        | Toggle code block wrapping.  | "n","v" |
+| `require("codecopy.config").toggle_notify()`            | Toggle copy notifications.   | "n","v" |
+| `require("codecopy.config").toggle_include_file_path()` | Toggle displaying file path. | "n","v" |
+| `require("codecopy.config").toggle_debug()`             | Toggle debut notifications.  | "n","v" |
 
 🧪 Example Keymap
 You can set your own keymap:
 
 ```lua
-vim.keymap.set("v", "<leader>cy", function()
-  require("codecopy").copy_visual()
-end, { desc = "Copy visual selection to clipboard" })
+vim.keymap.set("v", "<leader>cc", "<CMD>CodeCopy<CR>", { desc = "CodeCopy to clipboard" })
+
+vim.keymap.set("n", "<leader>cn", function()
+  require("codecopy.config").toggle_notify()
+end, { desc = "CodeCopy toggle notifications." })
+
+vim.keymap.set({"n","v"}, "<leader>cg", function()
+  require("codecopy.config").toggle_code_fence()
+end, { desc = "CodeCopy toggle fencing." })
 ```
