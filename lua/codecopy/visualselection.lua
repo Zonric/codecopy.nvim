@@ -8,15 +8,23 @@ local function get_visual_selection()
 	-- local _, start_row, start_col, _ = unpack(vim.fn.getpos("'<"))
 	-- local _, end_row, end_col, _ = unpack(vim.fn.getpos("'>"))
 	-- 0 indexing adjustment
-	local lines = {""}
+	local lines = { "" }
 	local start_pos = vim.fn.getpos("v")
 	local end_pos = vim.fn.getpos(".")
 	local temp_pos = 0
 
-
 	-- debug output
 	if options.debug then
-		vim.notify("M: " .. vim.inspect(vimode) .. " | StartPos: " ..vim.inspect(start_pos) .. ", EndPos: " .. vim.inspect(end_pos), vim.log.levels.WARN, { title = "CodeCopy Debug: " })
+		vim.notify(
+			"M: "
+				.. vim.inspect(vimode)
+				.. " | StartPos: "
+				.. vim.inspect(start_pos)
+				.. ", EndPos: "
+				.. vim.inspect(end_pos),
+			vim.log.levels.WARN,
+			{ title = "CodeCopy Debug: " }
+		)
 	end
 
 	-- Visual by Character or Line ( Bottom->Up linked Inversion )
@@ -70,9 +78,10 @@ local function get_visual_selection()
 			lines[i] = string.sub(lines[i], start_pos[3], end_pos[3])
 		end
 	end
+	linecount = #lines
 	-- Debug output
 	if options.debug then
-		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.WARN, { title = "CodeCopy Debug:"})
+		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.WARN, { title = "CodeCopy Debug:" })
 	end
 
 	return table.concat(lines, "\n")
@@ -82,7 +91,7 @@ end
 -- markdown codeblocks adds the lang based on the file ext,
 -- and sets it to register '+'.
 -- Uses: `vim.fn.setreg()`. See `:h registers`
--- Example: 
+-- Example:
 -- A visual selection in `some/file.lua`:
 -- ````
 -- local function foo()
@@ -113,7 +122,11 @@ function M.copy()
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
 
 	if options.notify then
-		vim.notify("Copied selection to clipboard [" .. linecount  .. "]", vim.log.levels.INFO, { title = "CodeCopy: Copied Successfuly." })
+		vim.notify(
+			"Copied selection to clipboard [" .. linecount .. "]",
+			vim.log.levels.INFO,
+			{ title = "CodeCopy: Copied Successfuly." }
+		)
 	end
 end
 
