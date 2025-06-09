@@ -13,6 +13,17 @@ M.defaults = {
 	notify = false,
 	include_file_path = false,
 	debug = false,
+	env = {
+		enabled = false,
+		env_path = "$HOME/.config/codecopy/env",
+	},
+	webhook = {
+		url = "",
+		author = {
+			name = "",
+			profile = "",
+		},
+	},
 	lang_map = {
 		["ahk"]   = "ahk",
 		["bash"]  = "bash",
@@ -85,6 +96,12 @@ end
 function M.toggle_debug()
 	M.options.debug = not M.options.debug
 	vim.notify("Debug: " .. (M.options.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
+end
+
+function M.get_env()
+	if M.options.env.enabled then
+		return require("codecopy.internal").parse_env(vim.fn.expand(M.options.env.env_path))
+	end
 end
 
 return M
