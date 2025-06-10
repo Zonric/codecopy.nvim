@@ -36,7 +36,7 @@ function M.create_float()
 		height = 1,
 	})
 
-	vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, {""})
+	vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { "" })
 	vim.api.nvim_set_current_win(input_win)
 
 	vim.api.nvim_buf_set_keymap(input_buf, "n", "<CR>", "", {
@@ -44,7 +44,7 @@ function M.create_float()
 		callback = function()
 			local webhook_url = {}
 			if options.env.enabled then
-				webhook_url = require("codecopy.config").get_env().WEBHOOK_URL
+				webhook_url = require("codecopy.config").get_env()
 			end
 			local code_lines = vim.api.nvim_buf_get_lines(code_buf, 0, -1, false)
 			local new_code = table.concat(code_lines, "\n")
@@ -58,13 +58,14 @@ function M.create_float()
 			vim.api.nvim_buf_delete(code_buf, { force = true })
 			vim.api.nvim_buf_delete(input_buf, { force = true })
 
-			require("codecopy.webhook").send(webhook_url, input_text, new_code)
+			local payload = require("codecopy.integrations.slackcompat").get_payload(input_text, new_code)
+			require("codecopy.webhook").send(webhook_url, input_text, new_code, payload)
 
 			if options.debug then
 				vim.notify("Message: " .. input_text)
 			end
 		end,
-		desc = "Submit and Hook the web..."
+		desc = "Submit and Hook the web...",
 	})
 end
 
