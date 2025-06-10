@@ -2,28 +2,7 @@ local M = {}
 local config = require("codecopy.config")
 local author = config.options.webhook.author
 
-function M.send(webhook_url, message, codecopy)
-	local fname = vim.api.nvim_buf_get_name(0)
-	local file_path = ""
-	if config.options.include_file_path then
-		file_path = fname
-	end
-	local payload_builder = {
-		content = message,
-		embeds = {
-			{
-				title = file_path,
-				description = codecopy,
-				color = 4321431,
-				author = {
-					name = author.name,
-					url = author.profile,
-				}
-			}
-		}
-	}
-	local payload = vim.fn.json_encode(payload_builder)
-
+function M.send(webhook_url, message, codecopy, payload)
 	if config.options.debug then
 		print(vim.inspect(payload))
 	end
@@ -36,4 +15,3 @@ function M.send(webhook_url, message, codecopy)
 end
 
 return M
-
