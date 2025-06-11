@@ -1,0 +1,35 @@
+name: Run Neovim Plugin Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git neovim lua luarocks
+
+      - name: Install busted
+        run: luarocks install busted
+
+      - name: Set up test environment
+        run: |
+          mkdir -p .test-config/nvim/pack/tests/start
+          git clone https://github.com/nvim-lua/plenary.nvim.git .test-config/nvim/pack/tests/start/plenary.nvim
+
+      - name: Run Plenary tests
+        env:
+          XDG_CONFIG_HOME: ${{ github.workspace }}/.test-config
+        run: |
+          nvim --headless -c "PlenaryBustedDirectory tests/ {minimal_init = './tests/minimal_init.lua'}"
