@@ -4,4 +4,4 @@
 test.*
 
 .env
-
+!.github/workflows/test.yml
