@@ -31,7 +31,7 @@ jobs:
       - name: Create test.env file
         run: |
           mkdir -p tests/codecopy
-          echo "DISCORD_WEBHOOK=https://discord.com/api/webhooks/123456789012345679/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" > tests/codecopy/test.env
+          echo "DISCORD_WEBHOOK=https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" > tests/codecopy/test.env
 
       - name: Run Plenary tests
         env:
