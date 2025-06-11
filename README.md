@@ -27,13 +27,30 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
     enabled = true,
     lazy = true,
     event = "VeryLazy",
+    dependancy = { "MunifTanjim/nui.nvim" },
     opts = { -- Default Configs
-    -- sets Default keymap for ("codecopy.visualselection").copy() using built in user command `:CodeCopy`
+    -- sets Default keymap for ("codecopy.visualselection").copy()
+       -- using built in user command `CodeCopy`
         keymap = "<leader>cc",
         code_fence = true,
-        notify = false,
-        include_file_path = false,
-        debug = false,
+        include_file_path = false, -- will use your `p` register 
+        messages = {
+            notify = false,
+            debug = false,
+        },
+        env = {
+            enabled = false,
+            -- Prefered method to store your webhook url
+            -- to avoid leaking if you repo your dotfiles
+            env_path = "$HOME/.config/codecopy/env",
+        },
+        webhook = {
+            intergation = "discord",
+            -- Optional : UNRECCOMMENDED way to pass webhook url
+            -- will be overridden if env is setup.
+            url = "",
+        },
+        -- Optional: lang_map override
         lang_map = {
             ["py"] = "python", -- :see below: For default lang_map
         },
@@ -65,11 +82,14 @@ In visual mode, select some text and press `<leader>cc` (or your custom mapping)
 
 The text will be copied to the system clipboard, wrapped in:
 
-\`\`\`lua
+```
+\```lua
 ...
-   your visual selection
+   local your_visual_selection = "Placed inside code block"
 ...
-\`\`\`
+
+\```
+```
 
 If you want to copy plain text, you can toggle ("codecopy.config").toggle_code_fence() on the fly.
 
@@ -85,7 +105,8 @@ If you want to copy plain text, you can toggle ("codecopy.config").toggle_code_f
 | `require("codecopy.config").toggle_include_file_path()` | Toggle displaying file path. | "n","v" |
 | `require("codecopy.config").toggle_debug()`             | Toggle debut notifications.  | "n","v" |
 
-🧪 Example Keymap
+🧪 Example Keymaps
+
 You can set your own keymap:
 
 ```lua

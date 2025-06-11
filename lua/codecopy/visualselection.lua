@@ -14,9 +14,9 @@ local function get_visual_selection()
 	local temp_pos = 0
 
 	-- debug output
-	if options.debug then
+	if options.messages.debug then
 		vim.notify(
-			"M: "
+			"Sel: "
 				.. vim.inspect(vimode)
 				.. " | StartPos: "
 				.. vim.inspect(start_pos)
@@ -80,7 +80,7 @@ local function get_visual_selection()
 	end
 	linecount = #lines
 	-- Debug output
-	if options.debug then
+	if options.messages.debug then
 		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.WARN, { title = "CodeCopy Debug:" })
 	end
 
@@ -114,24 +114,24 @@ function M.copy()
 	local fname = vim.api.nvim_buf_get_name(0)
 	local fext = vim.fn.fnamemodify(fname, ":e")
 	local lang = get_lang_by_ext(fext)
-	local text = ""
+	local codecopy = ""
 	if options.include_file_path then
-		text = text .. "### " .. fname .. "\n\n"
+		vim.fn.setreg("p", fname .. "\n")
 	end
 	if options.code_fence then
-		text = text .. "```" .. lang  .. "\n"
+		codecopy = codecopy .. "```" .. lang  .. "\n"
 	end
-	text = text .. get_visual_selection()
+	codecopy = codecopy .. get_visual_selection()
 	if options.code_fence then
-		text = text .. "\n```"
+		codecopy = codecopy .. "\n```"
 	end
 
 	-- set reg
-	vim.fn.setreg("+", text)
+	vim.fn.setreg("+", codecopy)
 	-- flush feedkeys or reg will be a step behind.
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
 
-	if options.notify then
+	if options.messages.notify then
 		vim.notify(
 			"Copied selection to clipboard [" .. linecount .. "]",
 			vim.log.levels.INFO,

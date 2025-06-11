@@ -10,19 +10,17 @@ local M = {}
 M.defaults = {
 	keymap = "<leader>cc",
 	code_fence = true,
-	notify = false,
 	include_file_path = false,
-	debug = false,
+	messages = {
+		notify = false,
+		debug = false,
+	},
 	env = {
 		enabled = false,
 		env_path = "$HOME/.config/codecopy/env",
 	},
 	webhook = {
 		url = "",
-		author = {
-			name = "",
-			profile = "",
-		},
 	},
 	lang_map = {
 		["ahk"] = "ahk",
@@ -82,8 +80,8 @@ end
 --- Toggles the notification setting.
 -- Flips `config.notify` between true and false.
 function M.toggle_notify()
-	M.options.notify = not M.options.notify
-	vim.notify("Notify: " .. (M.options.notify and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	M.options.messages.notify = not M.options.messages.notify
+	vim.notify("Notify: " .. (M.options.messages.notify and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
 end
 
 --- Toggles the inclusion of the file location in the markdown.
@@ -94,14 +92,17 @@ function M.toggle_include_file_path()
 end
 
 function M.toggle_debug()
-	M.options.debug = not M.options.debug
-	vim.notify("Debug: " .. (M.options.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
+	M.options.messages.debug = not M.options.messages.debug
+	vim.notify("Debug: " .. (M.options.messages.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
 end
 
 function M.get_env()
-	vim.print("CodeCopy: Getting environment variables from " .. M.options.env.env_path)
+	local expanded_path = vim.fn.expand(M.options.env.env_path)
+	if M.options.messages.debug then
+		vim.notify("Environment variables from " .. expanded_path, vim.log.levels.WARN, { title = "CodeCopy Loading:" })
+	end
 	if M.options.env.enabled then
-		return require("codecopy.internal").parse_env(vim.fn.expand(M.options.env.env_path))
+		return require("codecopy.internal").parse_env(expanded_path)
 	end
 end
 
