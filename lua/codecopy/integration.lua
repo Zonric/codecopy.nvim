@@ -26,6 +26,7 @@ function M.dispatch()
 	end
 
 	local results = integration_module.build(state.data)
+	local response_parser = require("codecopy.response_parser")
 
 	---Executes the cmd in a new job.
 	vim.fn.jobstart(results.cmd, {
@@ -35,12 +36,7 @@ function M.dispatch()
 			end
 		end,
 		on_stdout = function(_, data)
-			local d = vim.fn.json_decode(data[1])
-			if d.result == "success" then
-				vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
-			else
-				vim.notify("Payload failed", vim.log.levels.ERROR, { title = "CodeCopy Error:" })
-			end
+			integration_module.handle_response(data)
 		end,
 		stdout_buffered = true,
 	})
