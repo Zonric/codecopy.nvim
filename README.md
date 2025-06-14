@@ -1,6 +1,15 @@
 # 📋 codecopy.nvim
 
-A simple Neovim plugin to copy visually selected text to the system clipboard — optionally wrapped in code fences (for Discord, GitHub, etc). Designed to be lightweight and configurable.
+A simple Neovim plugin to copy selected text to the system clipboard.<br>
+Wrapped in markdown code fences (for Discord, GitHub, etc).
+- can optout in config
+[See Installation](#🔌-installation)
+
+Designed to be lightweight and configurable.
+
+---
+
+![Screenshot](./.screenshot.png)
 
 ---
 
@@ -8,7 +17,7 @@ A simple Neovim plugin to copy visually selected text to the system clipboard �
 
 - 📦 Copy visual selection to clipboard
 - 💻 Wrap in code fences (e.g., \`\`\`lua )
-- 🗺️ Optional header displaying file path (e.g., `### /some/file.ext` )
+- 🗺️ Optional footer displaying file path ( */loc/of/some/file.txt* )
 - 🔔 Optional notifications
 - 🔧 User-configurable options and keymaps
 - ⚙️ Expandable dynamic language detection
@@ -23,6 +32,16 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
     "Zonric/codecopy.nvim",
+    event = "VeryLazy",
+    dependancy = { "MunifTanjim/nui.nvim" },
+}
+```
+
+Default configuration:
+
+```lua
+{
+    "Zonric/codecopy.nvim",
     branch = "master",
     enabled = true,
     lazy = true,
@@ -33,7 +52,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
        -- using built in user command `CodeCopy`
         keymap = "<leader>cc",
         code_fence = true,
-        include_file_path = false, -- will use your `p` register 
+        include_file_path = false,
         messages = {
             notify = false,
             debug = false,
@@ -45,33 +64,19 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
             env_path = "$HOME/.config/codecopy/env",
         },
         webhook = {
-            intergation = "discord",
             -- Optional : UNRECCOMMENDED way to pass webhook url
             -- will be overridden if env is setup.
+            branding = false, --Toggle true, to show us some love with a nod. 😉
+            embed = false,
+            ---Optional : Add your profile or website to the embed, if used.
+            ---author = {
+                ---name = "CodeCopy.nvim",
+                ---profile = "https://github.com/Zonric/codecopy.nvim",
+            ---},
             url = "",
-        },
-        -- Optional: lang_map override
-        lang_map = {
-            ["py"] = "python", -- :see below: For default lang_map
         },
     },
 }
-```
-Included lang_map:
-```text
-["ahk"] = "ahk", ["bash"] = "bash", ["bat"] = "bat",
-["c"] = "c", ["c++"] = "cpp", ["cc"] = "cpp",
-["cmd"] = "bat", ["cpp"] = "cpp", ["css"] = "css",
-["cxx"] = "cpp", ["diff"] = "diff", ["go"] = "go",
-["h++"] = "cpp", ["hh"] = "cpp", ["hpp"] = "cpp",
-["htm"] = "html", ["html"] = "html", ["xhtml"] = "html",
-["hxx"] = "cpp", ["ini"] = "ini", ["java"] = "java",
-["js"] = "javascript", ["lua"] = "lua", ["md"] = "markdown",
-["patch"] = "diff", ["py"] = "python", ["rust"] = "rust",
-["sh"] = "bash", ["ts"] = "typescript", ["zsh"] = "zsh",
-["php"] = "php", ["blade"] = "html", ["text"] = "txt",
-["vim"] = "vim", ["xml"] = "xml", ["xsl"] = "xml",
-["yaml"] = "yaml", ["yml"] = "yaml",
 ```
 
 ---
@@ -79,19 +84,19 @@ Included lang_map:
 🗝️ Usage
 
 In visual mode, select some text and press `<leader>cc` (or your custom mapping).
-
 The text will be copied to the system clipboard, wrapped in:
 
-```
+```text
 \```lua
-...
-   local your_visual_selection = "Placed inside code block"
-...
+  ...
+  local your_visual_selection = "Placed inside code block"
+  ...
 
 \```
+
 ```
 
-If you want to copy plain text, you can toggle ("codecopy.config").toggle_code_fence() on the fly.
+If you want to copy plain text, you can toggle `require ("codecopy.config").toggle_code_fence()` on the fly.
 
 ---
 
@@ -99,7 +104,7 @@ If you want to copy plain text, you can toggle ("codecopy.config").toggle_code_f
 
 | Function                                                | Description                  | Modes   |
 |---------------------------------------------------------|------------------------------|---------|
-| `require("codecopy.visualselection").copy()`            | Manually trigger copy.       | "v"     |
+| `require("codecopy.selection").copy()`                  | Manually trigger copy.       | "v"     |
 | `require("codecopy.config").toggle_code_fence()`        | Toggle code block wrapping.  | "n","v" |
 | `require("codecopy.config").toggle_notify()`            | Toggle copy notifications.   | "n","v" |
 | `require("codecopy.config").toggle_include_file_path()` | Toggle displaying file path. | "n","v" |

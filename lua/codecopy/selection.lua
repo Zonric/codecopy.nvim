@@ -120,20 +120,20 @@ function M.copy()
 	state.data.file.name = vim.fn.fnamemodify(state.data.file.path, ":t")
 	state.data.file.ext = vim.fn.fnamemodify(state.data.file.name, ":e")
 	state.data.file.lang = vim.filetype.match({ filename = "file." .. state.data.file.ext }) or "text"
-	-- local codecopy = ""
-	-- if options.code_fence then
-	-- 	codecopy = codecopy .. "```" .. state.data.file.lang .. "\n"
-	-- end
-	-- codecopy = codecopy .. get_visual_selection()
-	-- if options.code_fence then
-	-- 	codecopy = codecopy .. "\n```"
-	-- end
 	state.data.codecopy = get_visual_selection()
+	local clipboard = ""
+	if options.code_fence then
+		clipboard = clipboard .. "```" .. state.data.file.lang .. "\n"
+	end
+	clipboard = clipboard .. state.data.codecopy
+	if options.code_fence then
+		clipboard = clipboard .. "\n```"
+	end
 
 	-- set state.data.codecopy state
 	-- state.data.codecopy = codecopy
 	-- set systemclipboard setreg('+') = codecopy
-	vim.fn.setreg("+", state.data.codecopy)
+	vim.fn.setreg("+", clipboard)
 	-- flush feedkeys or reg will be a step behind.
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
 
