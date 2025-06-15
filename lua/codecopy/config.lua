@@ -32,37 +32,57 @@ function M.setup(opts)
 end
 
 ---Toggles code fencing.
----Flips `config.code_fence` between true and false.
 function M.toggle_code_fence()
-	M.options.code_fence = not M.options.code_fence
-	vim.notify("Code Fencing: " .. (M.options.code_fence and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
-end
-
----Toggles the notification setting.
----Flips `config.notify` between true and false.
-function M.toggle_notify()
-	M.options.messages.notify = not M.options.messages.notify
-	vim.notify("Notify: " .. (M.options.messages.notify and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	M.options.codecopy.code_fence = not M.options.codecopy.code_fence
+	if not M.options.messages.silent then
+		vim.notify("Code Fencing: " .. (M.options.codecopy.code_fence and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
 end
 
 ---Toggles the inclusion of the file location in the markdown.
----Flips `config.include_file_path` between true and false.
 function M.toggle_include_file_path()
-	M.options.include_file_path = not M.options.include_file_path
-	vim.notify("Include File Path: " .. (M.options.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
+	M.options.codecopy.include_file_path = not M.options.codecopy.include_file_path
+	if not M.options.messages.silent then
+		vim.notify("Include File Path: " .. (M.options.codecopy.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
+end
+
+---Toggles the UI opening on a CodeCopy
+function M.toggle_openui()
+	M.options.codecopy.openui = not M.options.codecopy.openui
+	if not M.options.messages.silent then
+		vim.notify("Open UI on codecopy: " .. (M.options.codecopy.openui and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
+end
+
+---Toggles the gist url to clipboard option.
+function M.toggle_gist_to_clipboard()
+	M.options.codecopy.gist_to_clipboard = not M.options.codecopy.gist_to_clipboard
+	if not M.options.messages.silent then
+		vim.notify("Gist to Clipboard: " .. (M.options.codecopy.gist_to_clipboard and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
+end
+
+---Toggles the notification setting.
+function M.toggle_notify()
+	M.options.messages.notify = not M.options.messages.notify
+	if not M.options.messages.silent then
+		vim.notify("Notify: " .. (M.options.messages.notify and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
 end
 
 ---Toggles the debug notification.
----Flips `config.messages.debug` between true and false.
 function M.toggle_debug()
 	M.options.messages.debug = not M.options.messages.debug
-	vim.notify("Debug: " .. (M.options.messages.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Settings:" })
+	if not M.options.messages.silent then
+		vim.notify("Debug: " .. (M.options.messages.debug and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
 end
 
 ---Gets the environment variables from the env_path.
 function M.get_env()
 	local expanded_path = vim.fn.expand(M.options.env.env_path)
-	if M.options.messages.debug then
+	if not M.options.messages.silent and M.options.messages.debug then
 		vim.notify("Environment variables from " .. expanded_path, vim.log.levels.WARN, { title = "CodeCopy Loading:" })
 	end
 	if M.options.env.enabled then

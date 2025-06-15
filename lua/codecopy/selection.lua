@@ -54,12 +54,22 @@ local function get_visual_selection()
 	local lines = { "" }
 
 	-- debug output
-	if options.messages.debug then
+	if not options.messages.silent and options.messages.debug then
 		vim.notify(
-			"Sel: [" .. selection.mode .. "]\n"
-			.. "  StartPos: {" .. selection.pos.start_row .. ", " .. selection.pos.start_col .. "}\n"
-			.. "  EndPos: {" .. selection.pos.end_row .. ", " .. selection.pos.end_col .. "}",
-			vim.log.levels.WARN,
+			"Sel: ["
+				.. selection.mode
+				.. "]\n"
+				.. "  StartPos: {"
+				.. selection.pos.start_row
+				.. ", "
+				.. selection.pos.start_col
+				.. "}\n"
+				.. "  EndPos: {"
+				.. selection.pos.end_row
+				.. ", "
+				.. selection.pos.end_col
+				.. "}",
+			vim.log.levels.DEBUG,
 			{ title = "CodeCopy Debug: " }
 		)
 	end
@@ -89,8 +99,8 @@ local function get_visual_selection()
 	end
 	linecount = #lines
 	-- Debug output
-	if options.messages.debug then
-		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.WARN, { title = "CodeCopy Debug:" })
+	if not options.messages.silent and options.messages.debug then
+		vim.notify("Lines: " .. vim.inspect(lines), vim.log.levels.DEBUG, { title = "CodeCopy Debug:" })
 	end
 
 	return table.concat(lines, "\n")
@@ -122,11 +132,11 @@ function M.copy()
 	state.data.file.lang = vim.filetype.match({ filename = "file." .. state.data.file.ext }) or "text"
 	state.data.codecopy = get_visual_selection()
 	local clipboard = ""
-	if options.code_fence then
+	if options.codecopy.code_fence then
 		clipboard = clipboard .. "```" .. state.data.file.lang .. "\n"
 	end
 	clipboard = clipboard .. state.data.codecopy
-	if options.code_fence then
+	if options.codecopy.code_fence then
 		clipboard = clipboard .. "\n```"
 	end
 
@@ -137,10 +147,10 @@ function M.copy()
 	-- flush feedkeys or reg will be a step behind.
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
 
-	if options.messages.notify then
+	if not options.messages.silent and (options.messages.notify or options.messages.debug) then
 		vim.notify("Copied [" .. linecount .. "] lines.", vim.log.levels.INFO, { title = "CodeCopy: Copied Successfuly." })
 	end
-	if options.openui then
+	if options.codecopy.openui then
 		require("codecopy.ui").open()
 	end
 end

@@ -19,7 +19,9 @@ local function build_menu_items(integrations)
 			if type(entry) == "table" and entry.name and entry.target then
 				table.insert(items, NuiMenu.item(entry.name, entry))
 			else
-				vim.notify("Invalid integration entry in evn.json: ".. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Warning"})
+				if not options.messages.silent then
+					vim.notify("Invalid integration entry in evn.json: " .. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Config Warning:" })
+				end
 			end
 		end
 	else
@@ -32,7 +34,7 @@ end
 ---Used for UI decor.
 ---@return string
 local function filepath_msg()
-	return options.include_file_path and "Filepath:" or "Filepath: Disabled"
+	return options.codecopy.include_file_path and "Filepath:" or "Filepath: Disabled"
 end
 
 ---Set buffers content
@@ -47,8 +49,7 @@ end
 ---@param newline boolean?
 ---@return string
 local function get_lines(bufnr, newline)
-	newline = newline or false
-	if newline then
+	if newline or false then
 		return table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), "\n")
 	else
 		return table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
@@ -57,8 +58,10 @@ end
 
 ---Unmounts and deletes UI state.
 local function cleanup()
-	if options.messages.debug then
-		vim.notify("Closing UI.", vim.log.levels.INFO, { title = "CodeCopy Info: " })
+	--force normal mode
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<ESC>", true, false, true), "n", false)
+	if not options.messages.silent and options.messages.debug then
+		vim.notify("Closing UI.", vim.log.levels.DEBUG, { title = "CodeCopy UI Debug: " })
 	end
 	-- Unmount layout window if still mounted
 	if state.ui.layout ~= nil and state.ui.layout._.mounted then
@@ -86,21 +89,23 @@ local function submit()
 		built_codecopy = "# " .. state.data.message .. "\n\n"
 	end
 	built_codecopy = built_codecopy .. state.data.clipboard
-	if options.include_file_path then
-		built_codecopy = built_codecopy .."\n\n*"..state.data.file.path.."*"
+	if options.codecopy.include_file_path then
+		built_codecopy = built_codecopy .. "\n\n*" .. state.data.file.path .. "*"
 	end
 
 	state.data.clipboard = built_codecopy
 
 	vim.fn.setreg("+", built_codecopy)
-	if options.messages.notify then
+	if not options.messages.silent and (options.messages.notify or options.messages.debug) then
 		vim.notify("Modified codecopy in clipboard.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
 	end
 
 	-- CLEANUP AISLE 5!! unmount window, delete & buffers
 	cleanup()
-	if state.data.selected_integration and state.data.selected_integration.target then
-		vim.notify(vim.inspect(state.data.selected_integration.target))
+	if not options.messages.silent and options.messages.debug then
+		if state.data.selected_integration and state.data.selected_integration.target then
+			vim.notify(vim.inspect(state.data.selected_integration.target), vim.log.levels.DEBUG, { title = "CodeCopy Debug:" })
+		end
 	end
 	require("codecopy.integration").dispatch()
 end
@@ -210,7 +215,7 @@ function M.open()
 
 	-- Build lines for code buffer
 	local code_buffer_builder = ""
-	if options.code_fence then
+	if options.codecopy.code_fence then
 		code_buffer_builder = "```" .. state.data.file.lang .. "\n" .. state.data.codecopy .. "\n```"
 	else
 		code_buffer_builder = state.data.codecopy or ""
@@ -225,7 +230,7 @@ function M.open()
 	end
 
 	-- vim.diagnostic.enable(false, { nil, state.ui.sections.code_win.bufnr })
-	if options.code_fence then
+	if options.codecopy.code_fence then
 		vim.bo[state.ui.sections.code_win.bufnr].filetype = "markdown"
 		pcall(function()
 			require("nvim-treesitter.highlight").attach(state.ui.sections.code_win.bufnr, "markdown")

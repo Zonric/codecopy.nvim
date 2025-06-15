@@ -34,18 +34,22 @@ function M.build(data)
 	}
 end
 
-function M.handle_response(data)
-	local check = #data or nil
+function M.handle_response(response)
+	local check = #response or nil
 	if check > 25 then
-		local url = data[9]:match([["html_url": "([^"]+)"]])
+		local url = response[9]:match([["html_url": "([^"]+)"]])
 		if options.codecopy.gist_to_clipboard then
 			vim.fn.setreg("+", url)
-			vim.notify("Payload sent and url copied to clipboard.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+			if options.messages.notify or options.messages.debug then
+				vim.notify("Payload sent and url copied to clipboard.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+			end
 		else
-			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+			if options.messages.notify or options.messages.debug then
+				vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+			end
 		end
 	else
-		vim.notify("Payload failed:\n    " .. data[2], vim.log.levels.ERROR, { title = "CodeCopy Error:" })
+		vim.notify("Payload failed:\n    " .. response[2], vim.log.levels.ERROR, { title = "CodeCopy Error:" })
 	end
 end
 
