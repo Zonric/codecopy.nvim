@@ -43,7 +43,7 @@ function M.handle_response(data)
 	if response.result == "success" then
 		vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
 	else
-		vim.notify("Payload failed", vim.log.levels.ERROR, { title = "CodeCopy Error:" })
+		vim.notify("Payload failed with message: \n    " .. response.msg, vim.log.levels.ERROR, { title = "CodeCopy Error:" })
 	end
 end
 

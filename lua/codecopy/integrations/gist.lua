@@ -1,4 +1,5 @@
 local M = {}
+local options = require("codecopy.config").options
 
 ---Builds the payload
 function M.build(data)
@@ -33,14 +34,18 @@ function M.build(data)
 	}
 end
 
-M.handle_response = function(data)
-	-- a successful response doesnt't have a status code in the data. but there is an id
-	-- TODO check if gist id is present
-	local id = data[5]
-	if id and string.match(id, "^[0-9]+$") then
-		vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+function M.handle_response(data)
+	local check = #data or nil
+	if check > 25 then
+		local url = data[9]:match([["html_url": "([^"]+)"]])
+		if options.codecopy.gist_to_clipboard then
+			vim.fn.setreg("+", url)
+			vim.notify("Payload sent and url copied to clipboard.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+		else
+			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
+		end
 	else
-		vim.notify("Payload failed", vim.log.levels.ERROR, { title = "CodeCopy Error:" })
+		vim.notify("Payload failed:\n    " .. data[2], vim.log.levels.ERROR, { title = "CodeCopy Error:" })
 	end
 end
 
