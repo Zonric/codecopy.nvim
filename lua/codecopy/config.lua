@@ -10,18 +10,19 @@ local M = {}
 M.defaults = {
 	keymap = "<leader>cc",
 	codecopy = {
+		openui = true,
 		code_fence = true,
 		include_file_path = false,
-		openui = false,
 		gist_to_clipboard = false,
+	},
+	env = {
+		enabled = false,
+		env_path = "$HOME/.config/codecopy.nvim/env.json",
 	},
 	messages = {
 		notify = false,
 		debug = false,
-	},
-	env = {
-		enabled = false,
-		env_path = "$HOME/.config/codecopy/env.json",
+		silent = false,
 	},
 }
 M.options = vim.deepcopy(M.defaults)
