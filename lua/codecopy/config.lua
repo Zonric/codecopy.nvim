@@ -9,9 +9,12 @@ local M = {}
 ---@field debug boolean
 M.defaults = {
 	keymap = "<leader>cc",
-	code_fence = true,
-	include_file_path = false,
-	openui = false,
+	codecopy = {
+		code_fence = true,
+		include_file_path = false,
+		openui = false,
+		gist_to_clipboard = false,
+	},
 	messages = {
 		notify = false,
 		debug = false,
@@ -20,15 +23,6 @@ M.defaults = {
 		enabled = false,
 		env_path = "$HOME/.config/codecopy/env.json",
 	},
-	webhook = {
-		branding = false,
-		embed = false,
-		--author = {
-			--name = "CodeCopy.nvim"
-			--proile = "https://github.com/Zonric/CodeCopy.nvim"
-		--},
-		url = "",
-	}
 }
 M.options = vim.deepcopy(M.defaults)
 
