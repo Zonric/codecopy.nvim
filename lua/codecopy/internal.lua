@@ -1,11 +1,14 @@
 local M = {}
+local options = require("codecopy.config").options
 
 function M.parse_env(filepath)
 	local env = {}
 	local file = io.open(filepath, "r")
 
 	if file == nil then
-		vim.notify("File not found: " .. filepath, vim.log.levels.WARN, { title = "CodeCopy Warnning:" })
+		if not options.messages.silent then
+			vim.notify("File not found: " .. filepath, vim.log.levels.ERROR, { title = "CodeCopy Config Error:" })
+		end
 		return {}
 	end
 

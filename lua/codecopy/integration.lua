@@ -7,7 +7,8 @@ function M.dispatch()
 	local state = require("codecopy.state")
 	local integration = state.data.selected_integration
 
-	if integration.target == "clipboard" then
+	if integration == nil or integration.target == "clipboard" then
+		-- nothing to do here, Im outta here...
 		return
 	end
 
@@ -15,16 +16,20 @@ function M.dispatch()
 	if options.env.enabled then
 		module_name = "codecopy.integrations." .. integration.target
 	else
-		vim.notify("Integration not found: " .. integration.target, vim.log.levels.ERROR, { title = "CodeCopy Error:" })
+		if not options.messages.silent then
+			vim.notify("Integration not found: " .. integration.target, vim.log.levels.ERROR, { title = "CodeCopy integration Error:" })
+		end
 		-- check in user dir for integration. if still not found give erro
 		return
 	end
 
 	local ok, integration_module = pcall(require, module_name)
 	if not ok then
-		vim.notify("Missing integration: " .. module_name, vim.log.levels.ERROR, { title = "CodeCopy Error:" })
-		if options.debug then
-			vim.notify(vim.inspect(integration_module))
+		if not options.messages.silent then
+			vim.notify("Missing integration: " .. module_name, vim.log.levels.ERROR, { title = "CodeCopy integration Error:" })
+		end
+		if not options.messages.silent and options.messages.debug then
+			vim.notify("integration_module:\n" .. vim.inspect(integration_module), vim.log.levels.DEBUG, { title = "CodeCopy integration Debug:" })
 		end
 		return
 	end
@@ -35,13 +40,15 @@ function M.dispatch()
 	vim.fn.jobstart(results.cmd, {
 		stdout_buffered = true,
 		on_stdout = function(_, data)
-			if options.debug or options.notify then
+			if not options.messages.silent then
 				integration_module.handle_response(data)
 			end
 		end,
 		on_exit = function(_, code)
 			if code ~= 0 then
-				vim.notify("Integration's `command` extited with code: " .. code, vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+				if not options.messages.silent then
+					vim.notify("Integration's `command` extited with code: " .. code, vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+				end
 			end
 		end,
 	})
