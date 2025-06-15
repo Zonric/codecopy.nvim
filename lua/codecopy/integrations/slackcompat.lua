@@ -15,6 +15,7 @@ M.build = function(data)
 		codecopy = data.codecopy
 	end
 	local payload_builder = {
+		channel = integration.channel,
 		blocks = {
 			{
 				type = "section",
@@ -44,14 +45,6 @@ M.build = function(data)
 
 	local payload = vim.fn.json_encode(payload_builder)
 
-	local url_builder = integration.url .. "?api_key=" .. integration.token
-	if integration.channel then
-		url_builder = url_builder .. "&stream=" .. integration.channel
-	end
-	if integration.topic then
-		url_builder = url_builder .. "&topic=" .. integration.topic
-	end
-
 	return {
 		cmd = {
 			"curl",
@@ -59,9 +52,11 @@ M.build = function(data)
 			"POST",
 			"-H",
 			"Content-Type: application/json",
+			"-H",
+			"Authorization: Bearer " .. integration.token,
 			"-d",
 			payload,
-			integration.url .. "?api_key=" .. integration.token .. "&stream=" .. integration.channel,
+			integration.url,
 		},
 	}
 end
