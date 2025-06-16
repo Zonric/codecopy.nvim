@@ -4,4 +4,12 @@
 test.*
 
 .env
-!.github/workflows/test.yml
+env.json
+
+!.luacheckrc
+!.editorconfig
+!.gitignore
+!.github/
+!.github/**
+!.github/workflows/
+!.github/ISSUE_TEMPLATE/
