@@ -1,7 +1,7 @@
 # 📋 codecopy.nvim
 
 A simple Neovim plugin to copy selected text to the system clipboard.<br>
-Wrapped in markdown code fences (for Discord, GitHub, etc). *(Optional via config)
+Wrapped in markdown code fences (for Discord, GitHub, etc). \*(Optional via config)
 
 [![Neovim](https://img.shields.io/badge/Neovim-0.9+-green?logo=neovim)](https://neovim.io)
 [![Lazy.nvim](https://img.shields.io/badge/Plugin_Manager-lazy.nvim-blue?logo=lua)](https://github.com/folke/lazy.nvim)
@@ -29,7 +29,7 @@ Strives to be minimal, configurable, and fast.
 - 📦 Copy visual selection to clipboard
 - 💻 Wrap in code fences (e.g., \`\`\`lua )
 - 🪐 Share CodeCopy snippets to Discord, Gist, Slack, and Zulip using optional integrations.
-- 🗺️ Optional footer displaying file path ( */loc/of/some/file.txt* )
+- 🗺️ Optional footer displaying file path ( _/loc/of/some/file.txt_ )
 - 🔔 Optional notifications: silent (none), notify (info), or go full debug
 - 🔧 User-configurable options and keymaps
 - ⚙️ Expandable dynamic language detection
@@ -39,24 +39,26 @@ Strives to be minimal, configurable, and fast.
 
 ## 🔌 Installation
 
+UPDATE: We are now hosted on [GitLab](https://gitlab.com/Zonric/codecopy.nvim)
+
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 Minimal:
 
 ```lua
 {
-    "Zonric/codecopy.nvim",
+		"https://gitlab.com/nullsyntax/codecopy.nvim.git",
     event = "VeryLazy",
     dependencies = { "MunifTanjim/nui.nvim" },
 }
 ```
 
 Default configuration:
-    Unless you want to customize codecopy, none are needed.
+Unless you want to customize codecopy, none are needed.
 
 ```lua
 {
-    "Zonric/codecopy.nvim",
+		"https://gitlab.com/nullsyntax/codecopy.nvim.git",
     branch = "master",
     enabled = true,
     lazy = true,
@@ -114,21 +116,21 @@ Examples for each integration are below.
 
 We currently support the following integrations:
 
-| Name | Target |
-|---|---|
-| Discord | discord |
-| Gist | gist |
-| Slack | slackcompat |
-| Zulip | zulip |
+| Name    | Target      |
+| ------- | ----------- |
+| Discord | discord     |
+| Gist    | gist        |
+| Slack   | slackcompat |
+| Zulip   | zulip       |
 
 #### 📂 JSON File (`$HOME/.config/codecopy.nvim/env.json`)
 
 The order of the list will determine how they are sorted in the integration list.<br>
+
 - name: is the display name of the integration.<br>
 - target: is the key name of the integration DON'T change this<br>
 - filepath: If true, the file path will be appended to the message. This overrides the plugin setting `include_file_path`<br>
-Plugins config `include_file_path` only applies to the clipboard.
-
+  Plugins config `include_file_path` only applies to the clipboard.
 
 ```json
 [
@@ -226,15 +228,15 @@ Plugins config `include_file_path` only applies to the clipboard.
 
 # 🔧 API & Keymaps
 
-| Command | Function | Description |
-|----------|---------------------------------------------------------|------------------------------|
-| CodeCopy | require("codecopy.selection").copy() | Manually trigger copy. |
-| CodeCopy open ui | require("codecopy.ui").open() | Manually opens UI. |
-| CodeCopy toggle openui | require("codecopy.config").toggle_openui() | Toggle auto open ui on CodeCopy. |
-| CodeCopy toggle code_fence | require("codecopy.config").toggle_code_fence() | Toggle code block wrapping. |
-| CodeCopy toggle notify | require("codecopy.config").toggle_notify() | Toggle copy notifications. |
-| CodeCopy toggle include_file_path | require("codecopy.config").toggle_include_file_path() | Toggle displaying file path. |
-| CodeCopy toggle debug | require("codecopy.config").toggle_debug() | Toggle debug notifications. |
+| Command                           | Function                                              | Description                                             |
+| --------------------------------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| CodeCopy                          | require("codecopy.selection").copy()                  | Manually trigger copy.                                  |
+| CodeCopy open ui                  | require("codecopy.ui").open()                         | Manually opens UI.                                      |
+| CodeCopy toggle openui            | require("codecopy.config").toggle_openui()            | Toggle auto open ui on CodeCopy.                        |
+| CodeCopy toggle code_fence        | require("codecopy.config").toggle_code_fence()        | Toggle code block wrapping.                             |
+| CodeCopy toggle notify            | require("codecopy.config").toggle_notify()            | Toggle copy notifications.                              |
+| CodeCopy toggle include_file_path | require("codecopy.config").toggle_include_file_path() | Toggle displaying file path.                            |
+| CodeCopy toggle debug             | require("codecopy.config").toggle_debug()             | Toggle debug notifications.                             |
 | CodeCopy toggle gist_to_clipboard | require("codecopy.config").toggle_gist_to_clipboard() | Toggle gist integration changing clipboard to gist url. |
 
 🧪 Example Keymaps
