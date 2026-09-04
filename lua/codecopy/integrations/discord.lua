@@ -5,14 +5,23 @@ local options = require("codecopy.config").options
 function M.build(data)
 	local integration = data.selected_integration
 	local payload_builder = {}
+	local title = ""
+	if data.message ~= "" then
+		title = "### " .. data.message .. "\n"
+	end
 	if integration.embed then
-		payload_builder.embeds = { {
-			title = "# " .. data.message,
-			author = {
-				name = "",
-				profile = "",
+		title = data.message
+		vim.print(data.message)
+		payload_builder.embeds = {
+			{
+				-- if msg nil fix this..
+				title = title,
+				author = {
+					name = "",
+					profile = "",
+				},
 			},
-		} }
+		}
 		local name, profile = "", ""
 		if integration.name and integration.name ~= "" then
 			name = integration.name
@@ -38,7 +47,7 @@ function M.build(data)
 			}
 		end
 	else
-		local content = "# " .. data.message .. "\n\n"
+		local content = title
 		if options.codecopy.code_fence then
 			content = content .. "```" .. data.file.lang .. "\n" .. data.codecopy .. "\n```"
 		else
@@ -50,7 +59,7 @@ function M.build(data)
 		payload_builder.content = content
 	end
 
-	local payload = vim.fn.json_encode(payload_builder)
+	local payload = vim.json.encode(payload_builder)
 
 	return {
 		cmd = { "curl", "-X", "POST", "-H", "Content-Type: application/json", "-d", payload, integration.url },
@@ -65,7 +74,7 @@ function M.handle_response(response)
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 		end
 	else
-		local error = vim.fn.json_decode(response[1])
+		local error = vim.json.decode(response[1])
 		vim.notify("Payload failed with message: \n    " .. error.message, vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
 	end
 end

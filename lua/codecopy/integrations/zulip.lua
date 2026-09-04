@@ -39,7 +39,7 @@ function M.build(data)
 end
 
 function M.handle_response(response)
-	local response_decode = vim.fn.json_decode(response[1])
+	local response_decode = vim.json.decode(response[1])
 	if response_decode.result == "success" then
 		if options.messages.notify or options.messages.debug then
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })

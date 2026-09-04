@@ -43,7 +43,7 @@ M.build = function(data)
 		})
 	end
 
-	local payload = vim.fn.json_encode(payload_builder)
+	local payload = vim.json.encode(payload_builder)
 
 	return {
 		cmd = {
@@ -63,7 +63,7 @@ end
 
 function M.handle_response(response)
 	---@diagnostic disable-next-line: redefined-local
-	local response = vim.fn.json_decode(response[1])
+	local response = vim.json.decode(response[1])
 	if response.result.ok then
 		if options.messages.notify or options.messages.debug then
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
