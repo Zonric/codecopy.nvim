@@ -38,14 +38,16 @@ function M.build(data)
 	}
 end
 
-function M.handle_response(response)
-	local response_decode = vim.fn.json_decode(response[1])
-	if response_decode.result == "success" then
+function M.handle_response(result)
+	local ok, response = pcall(vim.fn.json_decode, result.stdout or "")
+	if not ok or type(response) ~= "table" then
+		vim.notify("Payload returned an invalid response.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+	elseif response.result == "success" then
 		if options.messages.notify or options.messages.debug then
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Info:" })
 		end
 	else
-		vim.notify("Payload failed with message: \n    " .. response_decode.msg, vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+		vim.notify("Payload failed with message: \n    " .. (response.msg or "Unknown error"), vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
 	end
 end
 
