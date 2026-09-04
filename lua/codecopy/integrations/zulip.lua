@@ -39,7 +39,7 @@ function M.build(data)
 end
 
 function M.handle_response(result)
-	local ok, response = pcall(vim.fn.json_decode, result.stdout or "")
+	local ok, response = pcall(vim.json.decode, result.stdout or "")
 	if not ok or type(response) ~= "table" then
 		vim.notify("Payload returned an invalid response.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
 	elseif response.result == "success" then

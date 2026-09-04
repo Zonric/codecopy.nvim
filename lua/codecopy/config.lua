@@ -80,15 +80,4 @@ function M.toggle_debug()
 	end
 end
 
----Gets the environment variables from the env_path.
-function M.get_env()
-	local expanded_path = vim.fn.expand(M.options.env.env_path)
-	if not M.options.messages.silent and M.options.messages.debug then
-		vim.notify("Environment variables from " .. expanded_path, vim.log.levels.WARN, { title = "CodeCopy Loading:" })
-	end
-	if M.options.env.enabled then
-		return require("codecopy.internal").parse_env(expanded_path)
-	end
-end
-
 return M

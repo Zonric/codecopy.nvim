@@ -5,14 +5,21 @@ local options = require("codecopy.config").options
 function M.build(data)
 	local integration = data.selected_integration
 	local payload_builder = {}
+	local title = ""
+	if data.message ~= "" then
+		title = "### " .. data.message .. "\n"
+	end
 	if integration.embed then
-		payload_builder.embeds = { {
-			title = "# " .. data.message,
-			author = {
-				name = "",
-				profile = "",
+		title = data.message
+		payload_builder.embeds = {
+			{
+				title = title,
+				author = {
+					name = "",
+					profile = "",
+				},
 			},
-		} }
+		}
 		local name, profile = "", ""
 		if integration.name and integration.name ~= "" then
 			name = integration.name
@@ -38,7 +45,7 @@ function M.build(data)
 			}
 		end
 	else
-		local content = "# " .. data.message .. "\n\n"
+		local content = title
 		if options.codecopy.code_fence then
 			content = content .. "```" .. data.file.lang .. "\n" .. data.codecopy .. "\n```"
 		else
@@ -50,7 +57,7 @@ function M.build(data)
 		payload_builder.content = content
 	end
 
-	local payload = vim.fn.json_encode(payload_builder)
+	local payload = vim.json.encode(payload_builder)
 
 	return {
 		cmd = { "curl", "-X", "POST", "-H", "Content-Type: application/json", "-d", payload, integration.url },
@@ -59,20 +66,18 @@ end
 
 function M.handle_response(result)
 	local response = result.stdout or ""
-	if response == "" then
+	if response == "" or response == nil then
 		if options.messages.notify or options.messages.debug then
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 		end
 		return
 	end
 
-	local ok, decoded = pcall(vim.fn.json_decode, response)
+	local ok, decoded = pcall(vim.json.decode, response)
 	if not ok or type(decoded) ~= "table" then
 		vim.notify("Payload returned an invalid response.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
 	elseif decoded.message then
 		vim.notify("Payload failed with message: \n    " .. decoded.message, vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
-	elseif options.messages.notify or options.messages.debug then
-		vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 	end
 end
 

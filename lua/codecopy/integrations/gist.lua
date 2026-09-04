@@ -14,7 +14,7 @@ function M.build(data)
 		},
 	}
 
-	local payload = vim.fn.json_encode(payload_builder)
+	local payload = vim.json.encode(payload_builder)
 
 	return {
 		cmd = {
