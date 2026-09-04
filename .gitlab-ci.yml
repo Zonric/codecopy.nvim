@@ -1,0 +1,35 @@
+stages:
+  - lint
+  - test
+
+variables:
+  PLENARY_DIR: "$CI_PROJECT_DIR/.test-config/nvim/pack/tests/start/plenary.nvim"
+
+# StyLua format & style check
+stylua:
+  stage: lint
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl unzip
+    - curl -fsSL https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-linux-x86_64.zip -o stylua.zip
+    - unzip stylua.zip -d /usr/local/bin && chmod +x /usr/local/bin/stylua
+  script:
+    - stylua --check lua/ plugin/ tests/
+
+# Neovim test suite across versions (0.12 stable and nightly)
+test:
+  stage: test
+  image: ubuntu:24.04
+  parallel:
+    matrix:
+      - NVIM_TAG: ['v0.12.5', 'nightly']
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates tar
+    - curl -LO "https://github.com/neovim/neovim/releases/download/${NVIM_TAG}/nvim-linux-x86_64.tar.gz"
+    - tar -xzf nvim-linux-x86_64.tar.gz -C /usr/local --strip-components=1
+    - rm nvim-linux-x86_64.tar.gz
+    - mkdir -p "$PLENARY_DIR"
+    - git clone --depth 1 https://github.com/nvim-lua/plenary.nvim "$PLENARY_DIR"
+  script:
+    - nvim --version
+    - nvim --headless -u tests/minimal_init.lua -c "PlenaryBustedDirectory tests/codecopy { minimal_init = 'tests/minimal_init.lua' }"
