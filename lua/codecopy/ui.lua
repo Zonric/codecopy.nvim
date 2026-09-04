@@ -20,7 +20,7 @@ local function build_menu_items(integrations)
 				table.insert(items, NuiMenu.item(entry.name, entry))
 			else
 				if not options.messages.silent then
-					vim.notify("Invalid integration entry in evn.json: " .. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Config Warning:" })
+					vim.notify("Invalid integration entry in env.json: " .. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Config Warning:" })
 				end
 			end
 		end
