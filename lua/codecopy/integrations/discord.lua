@@ -64,15 +64,20 @@ function M.build(data)
 	}
 end
 
-function M.handle_response(response)
-	---@diagnostic disable-next-line: redefined-local
-	local response = response[1]
+function M.handle_response(result)
+	local response = result.stdout or ""
 	if response == "" or response == nil then
 		if options.messages.notify or options.messages.debug then
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 		end
-	else
-		vim.notify("Discord Payload failed.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
+		return
+	end
+
+	local ok, decoded = pcall(vim.json.decode, response)
+	if not ok or type(decoded) ~= "table" then
+		vim.notify("Payload returned an invalid response.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
+	elseif decoded.message then
+		vim.notify("Payload failed with message: \n    " .. decoded.message, vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
 	end
 end
 
