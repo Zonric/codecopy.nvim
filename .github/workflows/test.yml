@@ -1,41 +1,67 @@
-name: Run Neovim Plugin Tests
+name: CI
 
 on:
-  push:
-    branches: [master]
   pull_request:
-    branches: [master]
+    branches:
+      - dev
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  lint:
+    name: StyLua
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:base-devel
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Install dependencies
+      - name: Check formatting
+        uses: JohnnyMorganz/stylua-action@v5
+        with:
+          token: ${{ github.token }}
+          version: 2.5.2
+          args: --check lua/ plugin/ tests/
+
+  test:
+    name: Neovim tests (${{ matrix.neovim }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        neovim:
+          - v0.12.5
+          - nightly
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Neovim ${{ matrix.neovim }}
+        env:
+          NVIM_TAG: ${{ matrix.neovim }}
         run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm git neovim lua luarocks
+          archive="$RUNNER_TEMP/nvim-$NVIM_TAG.tar.gz"
+          install_dir="$RUNNER_TEMP/nvim-$NVIM_TAG"
+          curl --fail --location --retry 3 \
+            --output "$archive" \
+            "https://github.com/neovim/neovim/releases/download/$NVIM_TAG/nvim-linux-x86_64.tar.gz"
+          mkdir -p "$install_dir"
+          tar -xzf "$archive" -C "$install_dir" --strip-components=1
+          echo "$install_dir/bin" >> "$GITHUB_PATH"
 
-      - name: Install busted
-        run: luarocks install busted
-
-      - name: Set up test environment
+      - name: Install Plenary
         run: |
-          mkdir -p .test-config/nvim/pack/tests/start
-          git clone https://github.com/nvim-lua/plenary.nvim.git .test-config/nvim/pack/tests/start/plenary.nvim
-
-      - name: Create test.env file
-        run: |
-          mkdir -p tests/codecopy
-          echo "DISCORD_WEBHOOK=https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" > tests/codecopy/test.env
+          plenary_dir="$GITHUB_WORKSPACE/.test-config/nvim/pack/tests/start/plenary.nvim"
+          mkdir -p "$(dirname "$plenary_dir")"
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim "$plenary_dir"
 
       - name: Run Plenary tests
-        env:
-          XDG_CONFIG_HOME: ${{ github.workspace }}/.test-config
         run: |
-          nvim --headless -c "PlenaryBustedDirectory tests/ {minimal_init = './tests/minimal_init.lua'}"
-          
+          nvim --version
+          nvim --headless -u tests/minimal_init.lua \
+            -c "PlenaryBustedDirectory tests/codecopy { minimal_init = 'tests/minimal_init.lua' }"
