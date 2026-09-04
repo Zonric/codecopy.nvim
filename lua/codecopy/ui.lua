@@ -24,8 +24,6 @@ local function build_menu_items(integrations)
 				end
 			end
 		end
-	else
-		table.insert(items, NuiMenu.item("Discord via Webhook", { target = "discord_wh" }))
 	end
 	return items
 end
@@ -111,6 +109,9 @@ local function submit()
 end
 
 ---Builds the UI, Cleans and rebuilds if necessary.
+local function integration_msg()
+	return options.env.enabled and "Integrations:" or "Integrations: Disabled"
+end
 ---Sets state.ui
 local function build_ui()
 	cleanup()
@@ -120,7 +121,7 @@ local function build_ui()
 		border = {
 			style = "rounded",
 			text = {
-				top = " Integration ",
+				top = integration_msg(),
 				top_align = "center",
 			},
 			position = "50%",
