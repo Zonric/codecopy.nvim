@@ -36,22 +36,27 @@ function M.dispatch()
 
 	local results = integration_module.build(state.data)
 
-	---Executes the cmd in a new job.
-	vim.fn.jobstart(results.cmd, {
-		stdout_buffered = true,
-		on_stdout = function(_, data)
+	local on_exit = vim.schedule_wrap(function(result)
+		if result.code ~= 0 or result.signal ~= 0 then
 			if not options.messages.silent then
-				integration_module.handle_response(data)
-			end
-		end,
-		on_exit = function(_, code)
-			if code ~= 0 then
-				if not options.messages.silent then
-					vim.notify("Integration's `command` extited with code: " .. code, vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+				local detail = vim.trim(result.stderr or "")
+				if detail == "" then
+					detail = "Process exited with code " .. result.code
 				end
+				vim.notify("Integration command failed:\n    " .. detail, vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
 			end
-		end,
-	})
+			return
+		end
+
+		if not options.messages.silent then
+			integration_module.handle_response(result)
+		end
+	end)
+
+	local ok, err = pcall(vim.system, results.cmd, { text = true }, on_exit)
+	if not ok and not options.messages.silent then
+		vim.notify("Failed to start integration command:\n    " .. tostring(err), vim.log.levels.ERROR, { title = "CodeCopy Integration Error:" })
+	end
 end
 
 return M
