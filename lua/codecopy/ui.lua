@@ -194,20 +194,20 @@ function M.open()
 		return
 	end
 
-	-- Set up menu items.
-	local menu_items = {}
-	local integrations = internal.import_env(options.env.env_path)
-	if integrations then
-		for _, entry in ipairs(integrations) do
-			table.insert(
-				menu_items,
-				NuiMenu.item(entry.name, {
-					target = entry.target,
-					token = entry.token,
-				})
-			)
-		end
-	end
+	-- -- Set up menu items.
+	-- local menu_items = {}
+	-- local integrations = internal.import_env(options.env.env_path)
+	-- if integrations then
+	-- 	for _, entry in ipairs(integrations) do
+	-- 		table.insert(
+	-- 			menu_items,
+	-- 			NuiMenu.item(entry.name, {
+	-- 				target = entry.target,
+	-- 				token = entry.token,
+	-- 			})
+	-- 		)
+	-- 	end
+	-- end
 
 	if (not state.ui.layout) or (not next(state.ui.sections)) then
 		build_ui()
