@@ -8,4 +8,3 @@ function M.setup(opts)
 	vim.keymap.set("v", key, "<CMD>CodeCopy<CR>", { desc = "CodeCopy: copy selection.", silent = true })
 end
 return M
-
