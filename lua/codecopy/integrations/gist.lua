@@ -34,10 +34,10 @@ function M.build(data)
 	}
 end
 
-function M.handle_response(response)
-	local check = #response or nil
-	if check > 25 then
-		local url = response[9]:match([["html_url": "([^"]+)"]])
+function M.handle_response(result)
+	local ok, response = pcall(vim.fn.json_decode, result.stdout or "")
+	if ok and type(response) == "table" and response.html_url then
+		local url = response.html_url
 		if options.codecopy.gist_to_clipboard then
 			vim.fn.setreg("+", url)
 			if options.messages.notify or options.messages.debug then
@@ -49,7 +49,8 @@ function M.handle_response(response)
 			end
 		end
 	else
-		vim.notify("Payload failed:\n    " .. response[2], vim.log.levels.ERROR, { title = "CodeCopy Error:" })
+		local message = ok and type(response) == "table" and response.message or "Invalid response from Gist"
+		vim.notify("Payload failed:\n    " .. message, vim.log.levels.ERROR, { title = "CodeCopy Error:" })
 	end
 end
 

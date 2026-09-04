@@ -3,7 +3,7 @@
 A simple Neovim plugin to copy selected text to the system clipboard.<br>
 Wrapped in markdown code fences (for Discord, GitHub, etc). \*(Optional via config)
 
-[![Neovim](https://img.shields.io/badge/Neovim-0.9+-green?logo=neovim)](https://neovim.io)
+[![Neovim](https://img.shields.io/badge/Neovim-0.10+-green?logo=neovim)](https://neovim.io)
 [![Lazy.nvim](https://img.shields.io/badge/Plugin_Manager-lazy.nvim-blue?logo=lua)](https://github.com/folke/lazy.nvim)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![nui.nvim](https://img.shields.io/badge/Dependency-nui.nvim-orange?logo=lua)](https://github.com/MunifTanjim/nui.nvim)
