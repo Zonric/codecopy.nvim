@@ -11,10 +11,8 @@ function M.build(data)
 	end
 	if integration.embed then
 		title = data.message
-		vim.print(data.message)
 		payload_builder.embeds = {
 			{
-				-- if msg nil fix this..
 				title = title,
 				author = {
 					name = "",
@@ -74,8 +72,7 @@ function M.handle_response(response)
 			vim.notify("Payload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 		end
 	else
-		local error = vim.json.decode(response[1])
-		vim.notify("Payload failed with message: \n    " .. error.message, vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
+		vim.notify("Discord Payload failed.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
 	end
 end
 
