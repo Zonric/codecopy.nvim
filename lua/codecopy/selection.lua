@@ -11,7 +11,8 @@ local function get_normalized_selection()
 	local temp_pos = nil
 
 	-- Visual by Character or Line ( Bottom->Up linked Inversion )
-	if state.data.selection.mode == "v" or "V" then
+	local mode = state.data.selection.mode
+	if mode == "v" or mode == "V" then
 		-- check for and correct bottom up selection
 		if start_pos[2] > end_pos[2] then
 			temp_pos = start_pos[2]
@@ -21,7 +22,7 @@ local function get_normalized_selection()
 			start_pos[3] = end_pos[3]
 			end_pos[3] = temp_pos
 		end
-	elseif state.data.selection.mode == "\22" then
+	elseif mode == "\22" then
 		-- Check for and correct bottom up selection
 		if start_pos[2] > end_pos[2] then
 			temp_pos = start_pos[2]
@@ -47,7 +48,7 @@ local function get_normalized_selection()
 end
 
 local function get_visual_selection()
-	local selection = require("codecopy.state").data.selection
+	local selection = state.data.selection
 	selection.mode = vim.fn.mode()
 	selection.pos = get_normalized_selection()
 
