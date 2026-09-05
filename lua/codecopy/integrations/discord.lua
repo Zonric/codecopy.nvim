@@ -78,6 +78,8 @@ function M.handle_response(result)
 		vim.notify("Payload returned an invalid response.", vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
 	elseif decoded.message then
 		vim.notify("Payload failed with message: \n    " .. decoded.message, vim.log.levels.ERROR, { title = "CodeCopy Integration Error: " })
+	elseif options.messages.notify or options.messages.debug then
+		vim.notify("Playload sent successfully.", vim.log.levels.INFO, { title = "CodeCopy Sent:" })
 	end
 end
 
