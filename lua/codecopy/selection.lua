@@ -6,53 +6,41 @@ local state = require("codecopy.state")
 local linecount = 0
 
 local function get_normalized_selection()
+	local mode = state.data.selection.mode
 	local start_pos = vim.fn.getpos("v")
 	local end_pos = vim.fn.getpos(".")
-	local temp_pos = nil
+
+	local start_row, start_col = start_pos[2], start_pos[3]
+	local end_row, end_col = end_pos[2], end_pos[3]
 
 	-- Visual by Character or Line ( Bottom->Up linked Inversion )
-	local mode = state.data.selection.mode
 	if mode == "v" or mode == "V" then
-		-- check for and correct bottom up selection
-		if start_pos[2] > end_pos[2] then
-			temp_pos = start_pos[2]
-			start_pos[2] = end_pos[2]
-			end_pos[2] = temp_pos
-			temp_pos = start_pos[3]
-			start_pos[3] = end_pos[3]
-			end_pos[3] = temp_pos
+		if start_row > end_row or (start_row == end_row and start_col > end_col) then
+			start_row, end_row = end_row, start_row
+			start_col, end_col = end_col, start_col
 		end
 	elseif mode == "\22" then
-		-- Check for and correct bottom up selection
-		if start_pos[2] > end_pos[2] then
-			temp_pos = start_pos[2]
-			start_pos[2] = end_pos[2]
-			end_pos[2] = temp_pos
+		if start_row > end_row then
+			start_row, end_row = end_row, start_row
 		end
-		-- Check for and correct left to right selection
-		if start_pos[3] > end_pos[3] then
-			temp_pos = start_pos[3]
-			start_pos[3] = end_pos[3]
-			end_pos[3] = temp_pos
+		if start_col > end_col then
+			start_col, end_col = end_col, start_col
 		end
 	end
-	-- 0 indexing adjustment
-	start_pos[2] = start_pos[2] - 1
 
 	return {
-		start_row = start_pos[2],
-		start_col = start_pos[3],
-		end_row = end_pos[2],
-		end_col = end_pos[3],
+		start_row = start_row - 1,
+		start_col = start_col,
+		end_row = end_row,
+		end_col = end_col,
 	}
 end
 
 local function get_visual_selection()
 	local selection = state.data.selection
-	selection.mode = vim.fn.mode()
+	local mode = vim.fn.mode()
+	selection.mode = mode
 	selection.pos = get_normalized_selection()
-
-	local lines = { "" }
 
 	-- debug output
 	if not options.messages.silent and options.messages.debug then
@@ -75,27 +63,30 @@ local function get_visual_selection()
 		)
 	end
 
-	-- Now get buffer lines
+	local lines = { "" }
 	lines = vim.api.nvim_buf_get_lines(0, selection.pos.start_row, selection.pos.end_row, false)
+	if #lines == 0 then
+		return ""
+	end
 
 	-- Mode selection trimming.
-	if state.data.selection.mode == "v" then
-		-- Visual by Character trim first line and last line
-		lines[1] = string.sub(lines[1], selection.pos.start_col)
+	if mode == "v" then
 		if #lines > 1 then
-			lines[#lines] = string.sub(lines[#lines], 0, selection.pos.end_col)
+			-- Single-line selection: slice between start_col end_col
+			lines[1] = string.sub(lines[1], selection.pos.start_col, selection.pos.end_col)
+		else
+			-- Mulit-line selection: trim first and last lines
+			lines[1] = string.sub(lines[1], selection.pos.start_col)
+			lines[#lines] = string.sub(lines[#lines], 1, selection.pos.end_col)
 		end
-	-- Visual by box selection (Check for shorter than end column position)
 	elseif state.data.selection.mode == "\22" then
-		-- Trim all lines to the vistual block
+		-- Visual block: slice col across all lines, with padding if necessary
 		for i, line in ipairs(lines) do
-			local linelength = vim.fn.strdisplaywidth(line)
-			-- Padding for lines over-cut by the slice
-			if linelength < selection.pos.end_col then
-				lines[i] = lines[i] .. string.rep(" ", selection.pos.end_col - linelength)
+			local len = vim.fn.strdisplaywidth(line)
+			if len < selection.pos.end_col then
+				line = line .. string.rep(" ", selection.pos.end_col - len)
 			end
-			-- Time for the trim...
-			lines[i] = string.sub(lines[i], selection.pos.start_col, selection.pos.end_col)
+			lines[i] = string.sub(line, selection.pos.start_col, selection.pos.end_col)
 		end
 	end
 	linecount = #lines
