@@ -10,7 +10,7 @@ Branch names follow a structured, human- and machine-readable format to improve 
 <type>/<description>
 ```
 
-Trunk branches (`main`, `master`, `develop`) do not use a prefix.
+Trunk branches (`dev`, `main`, `master`, `develop`) do not use a prefix.
 
 ---
 
@@ -54,7 +54,7 @@ The Augmented Backus-Naur Form (ABNF) grammar defining this repository's branch 
 
 ```abnf
 branch-name     = trunk-branch / prefixed-branch
-trunk-branch    = "main" / "master" / "develop"
+trunk-branch    = "dev" / "main" / "master" / "develop"
 prefixed-branch = type "/" description
 type            = "feat" / "feature" / "fix" / "bugfix" / "hotfix" / "refac" / "refactor" / "ci" / "cicd" / "test" / "tests" / "chore" / "release" / "ai"
 description     = desc-segment *("-" desc-segment)
@@ -70,6 +70,7 @@ DIGIT           = %x30-39 ; 0-9
 ## Examples
 
 ### Valid Branches
+- `dev`
 - `main`
 - `develop`
 - `feat/add-statusline-component`
