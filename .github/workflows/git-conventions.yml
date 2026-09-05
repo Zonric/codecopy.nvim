@@ -1,0 +1,90 @@
+name: Git Conventions
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  branch-lint:
+    name: Branch Name Enforcement (Strict)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          echo "Validating branch name: '$BRANCH'"
+
+          # Allow trunk branches if PR is opened from them (e.g. forks or internal syncs)
+          if [[ "$BRANCH" =~ ^(main|master|develop)$ ]]; then
+            echo "✓ Trunk branch '$BRANCH' allowed."
+            exit 0
+          fi
+
+          # Strictly enforce <type>/<description> matching docs/conventions/branching.md
+          # Preferred prefixes: feat, fix, refac, ci, tests, chore, release, ai
+          # Permitted long prefixes: feature, bugfix, hotfix, refactor, cicd, test
+          # Description: lowercase alphanumerics, hyphens, dots, no leading/trailing/consecutive hyphens or dots
+          BRANCH_REGEX="^(feat|feature|fix|bugfix|hotfix|refac|refactor|ci|cicd|test|tests|chore|release|ai)/([a-z0-9]+([.-][a-z0-9]+)*)$"
+
+          if [[ ! "$BRANCH" =~ $BRANCH_REGEX ]]; then
+            echo "::error title=Invalid Branch Name::Branch '$BRANCH' violates the Conventional Branch specification."
+            echo ""
+            echo "Allowed prefixes (prefer short form): feat/ (feature/), fix/ (bugfix/, hotfix/), refac/ (refactor/), ci/ (cicd/), tests/ (test/), chore/, release/, ai/"
+            echo "Rules:"
+            echo "  - Lowercase alphanumeric characters (a-z, 0-9), hyphens (-), and dots (.)"
+            echo "  - No leading, trailing, or consecutive hyphens or dots"
+            echo "  - Present tense imperative descriptions (e.g., fix, not fixed)"
+            echo "  - All AI workflows must use ai/, no vendor-split prefixes"
+            echo ""
+            echo "Refer to docs/conventions/branching.md for details."
+            exit 1
+          fi
+
+          echo "✓ Branch '$BRANCH' satisfies branch naming convention."
+
+  commit-lint:
+    name: Commit Message Check (Informational)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout repository with full commit history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Verify Conventional Commits (non-blocking)
+        run: |
+          PATTERN="^(feat|fix|refactor|perf|style|test|docs|build|ci|chore|revert|ai)(\([a-zA-Z0-9_-]+\))?!?: .+$"
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
+          HEAD_REF="${{ github.event.pull_request.head.sha }}"
+
+          echo "Checking commits between $BASE_REF and $HEAD_REF against Conventional Commits..."
+
+          NON_CONFORMING=0
+          while IFS= read -r hash; do
+            subject=$(git log -1 --format="%s" "$hash")
+            if ! echo "$subject" | grep -Eq "$PATTERN"; then
+              echo "::warning title=Non-conventional Commit::Commit $hash does not follow Conventional Commits: '$subject'"
+              NON_CONFORMING=$((NON_CONFORMING + 1))
+            else
+              echo "✓ Commit $hash follows convention: '$subject'"
+            fi
+          done < <(git rev-list "${BASE_REF}..${HEAD_REF}")
+
+          if [ "$NON_CONFORMING" -gt 0 ]; then
+            echo ""
+            echo "Notice: $NON_CONFORMING commit(s) do not follow Conventional Commits specification."
+            echo "Refer to docs/conventions/commits.md for formatting guidance."
+          else
+            echo ""
+            echo "All commits adhere to Conventional Commits standard."
+          fi
