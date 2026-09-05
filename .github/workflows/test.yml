@@ -1,4 +1,4 @@
-name: CI
+name: Tests
 
 on:
   pull_request:
@@ -14,20 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: StyLua
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Check formatting
-        uses: JohnnyMorganz/stylua-action@v5
-        with:
-          token: ${{ github.token }}
-          version: 2.5.2
-          args: --check lua/ plugin/ tests/
-
   test:
     name: Neovim tests (${{ matrix.neovim }})
     runs-on: ubuntu-latest
