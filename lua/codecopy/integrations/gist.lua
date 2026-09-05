@@ -35,7 +35,7 @@ function M.build(data)
 end
 
 function M.handle_response(result)
-	local ok, response = pcall(vim.fn.json_decode, result.stdout or "")
+	local ok, response = pcall(vim.json.decode, result.stdout or "")
 	if ok and type(response) == "table" and response.html_url then
 		local url = response.html_url
 		if options.codecopy.gist_to_clipboard then
