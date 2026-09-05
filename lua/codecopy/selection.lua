@@ -118,10 +118,18 @@ end
 -- ```
 -- ````
 function M.copy()
-	state.data.file.path = vim.fn.fnamemodify(vim.trim(vim.api.nvim_buf_get_name(0)), ":p:.")
-	state.data.file.name = vim.fn.fnamemodify(state.data.file.path, ":t")
-	state.data.file.ext = vim.fn.fnamemodify(state.data.file.name, ":e")
-	state.data.file.lang = vim.filetype.match({ filename = "file." .. state.data.file.ext }) or "text"
+	local path = vim.fs.normalize(vim.api.nvim_buf_get_name(0))
+	state.data.file.path = path
+
+	local name = vim.fs.basename(path)
+	state.data.file.name = name
+
+	local ext = vim.fs.ext(name)
+	state.data.file.ext = ext
+
+	local lang = vim.filetype.match({ filename = name }) or "text"
+	state.data.file.lang = lang
+
 	state.data.codecopy = get_visual_selection()
 	local clipboard = ""
 	if options.codecopy.code_fence then
