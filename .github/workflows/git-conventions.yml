@@ -23,8 +23,8 @@ jobs:
           BRANCH="${{ github.head_ref }}"
           echo "Validating branch name: '$BRANCH'"
 
-          # Allow trunk branches if PR is opened from them (e.g. forks or internal syncs)
-          if [[ "$BRANCH" =~ ^(main|master|develop)$ ]]; then
+          # Allow trunk branches if PR is opened from them (e.g. dev, main, master, develop)
+          if [[ "$BRANCH" =~ ^(dev|main|master|develop)$ ]]; then
             echo "✓ Trunk branch '$BRANCH' allowed."
             exit 0
           fi
