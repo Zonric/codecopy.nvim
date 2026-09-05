@@ -78,7 +78,6 @@ end
 ---Sets up state.data and builds the final code snippet.
 local function submit()
 	state.data.file.path = get_lines(state.ui.sections.filepath_win.bufnr)
-	state.data.file.name = vim.fn.fnamemodify(state.data.file.path, ":t")
 	state.data.clipboard = get_lines(state.ui.sections.code_win.bufnr, true)
 	state.data.message = get_lines(state.ui.sections.message_win.bufnr)
 
