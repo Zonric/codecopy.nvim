@@ -31,7 +31,7 @@ Strives to be minimal, configurable, and fast.
 - 📦 Copy visual selection to clipboard
 - 💻 Wrap in code fences (e.g., \`\`\`lua )
 - 🪐 Share CodeCopy snippets to Discord, Gist, Slack, and Zulip using optional integrations.
-- 🗺️ Optional footer displaying file path ( _/loc/of/some/file.txt_ )
+- 🗺️ Optional footer displaying full or relative file paths ( _/loc/of/some/file.txt_ )
 - 🔔 Optional notifications: silent (none), notify (info), or go full debug
 - 🔧 User-configurable options and keymaps
 - ⚙️ Expandable dynamic language detection
@@ -74,6 +74,8 @@ Unless you want to customize codecopy, none are needed.
             code_fence = true,
             -- Include the file path after the markdown.
             include_file_path = false,
+            -- Use relative path, or full path if false.
+            use_relpath = true,
             -- You can have the url for the gist written to the clipboard
             gist_to_clipboard = false,
         },

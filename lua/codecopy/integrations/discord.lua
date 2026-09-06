@@ -40,8 +40,14 @@ function M.build(data)
 			payload_builder.embeds[1].description = data.codecopy
 		end
 		if (integration.filepath == nil and options.codecopy.include_file_path) or integration.filepath then
+			local filepath = ""
+			if options.codecopy.use_relpath then
+				filepath = data.file.relpath
+			else
+				filepath = data.file.path
+			end
 			payload_builder.embeds[1].footer = {
-				text = data.file.path,
+				text = filepath,
 			}
 		end
 	else
@@ -52,7 +58,13 @@ function M.build(data)
 			content = content .. data.codecopy
 		end
 		if (integration.filepath == nil and options.codecopy.include_file_path) or integration.filepath then
-			content = content .. "*" .. data.file.path .. "*"
+			local filepath = ""
+			if options.codecopy.use_relpath then
+				filepath = data.file.relpath
+			else
+				filepath = data.file.path
+			end
+			content = content .. "*" .. filepath .. "*"
 		end
 		payload_builder.content = content
 	end
