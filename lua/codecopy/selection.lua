@@ -122,8 +122,8 @@ function M.copy()
 	local path = vim.fs.normalize(vim.api.nvim_buf_get_name(0))
 	state.data.file.path = path
 
-	local relpath = vim.fs.normalize(vim.fs.relpath(cwd, path))
-	state.data.file.relpath = relpath
+	local relpath = vim.fs.relpath(cwd, path)
+	state.data.file.relpath = relpath and vim.fs.normalize(relpath) or path
 
 	local name = vim.fs.basename(path)
 	state.data.file.name = name
