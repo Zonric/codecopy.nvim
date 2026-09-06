@@ -32,7 +32,11 @@ end
 ---Used for UI decor.
 ---@return string
 local function filepath_msg()
-	return options.codecopy.include_file_path and "Filepath:" or "Filepath: Disabled"
+	local filepath_mode = "Filepath:"
+	if options.codecopy.use_relpath then
+		filepath_mode = "Relative path:"
+	end
+	return options.codecopy.include_file_path and filepath_mode or (filepath_mode .. " Disabled")
 end
 
 ---Set buffers content
@@ -87,7 +91,11 @@ local function submit()
 	end
 	built_codecopy = built_codecopy .. state.data.clipboard
 	if options.codecopy.include_file_path then
-		built_codecopy = built_codecopy .. "\n\n*" .. state.data.file.path .. "*"
+		if options.codecopy.use_relpath then
+			built_codecopy = built_codecopy .. "\n\n*" .. state.data.file.relpath .. "*"
+		else
+			built_codecopy = built_codecopy .. "\n\n*" .. state.data.file.path .. "*"
+		end
 	end
 
 	state.data.clipboard = built_codecopy
@@ -225,7 +233,13 @@ function M.open()
 	set_lines(state.ui.sections.code_win.bufnr, code_buffer_builder)
 	-- Setting buffer text for filepath.
 	if state.data.file.path ~= nil then
-		set_lines(state.ui.sections.filepath_win.bufnr, state.data.file.path)
+		local filepath = ""
+		if options.codecopy.use_relpath then
+			filepath = state.data.file.relpath
+		else
+			filepath = state.data.file.path
+		end
+		set_lines(state.ui.sections.filepath_win.bufnr, filepath)
 	end
 	if (state.data.message ~= nil) and (state.data.message ~= "") then
 		set_lines(state.ui.sections.message_win.bufnr, state.data.message)
