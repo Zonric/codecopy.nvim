@@ -34,11 +34,17 @@ M.build = function(data)
 		},
 	}
 	if (integration.filepath == nil and options.codecopy.include_file_path) or integration.filepath then
+		local filepath = ""
+		if options.codecopy.use_relpath then
+			filepath = data.file.relpath
+		else
+			filepath = data.file.path
+		end
 		table.insert(payload_builder.blocks, {
 			type = "section",
 			text = {
 				type = "mrkdwn",
-				text = "*" .. data.file.path .. "*",
+				text = "*" .. filepath .. "*",
 			},
 		})
 	end

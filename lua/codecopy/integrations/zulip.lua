@@ -15,7 +15,13 @@ function M.build(data)
 		payload.content = data.codecopy
 	end
 	if (integration.filepath == nil and options.codecopy.include_file_path) or integration.filepath then
-		payload.content = payload.content .. "\n\n*" .. data.file.path .. "*"
+		local filepath = ""
+		if options.codecopy.use_relpath then
+			filepath = data.file.relpath
+		else
+			filepath = data.file.path
+		end
+		payload.content = payload.content .. "\n\n*" .. filepath .. "*"
 	end
 
 	return {

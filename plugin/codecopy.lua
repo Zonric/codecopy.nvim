@@ -12,6 +12,8 @@ vim.api.nvim_create_user_command("CodeCopy", function(opts)
 		require("codecopy.config").toggle_code_fence()
 	elseif cmd == "toggle include_file_path" then
 		require("codecopy.config").toggle_include_file_path()
+	elseif cmd == "toggle relpath" then
+		require("codecopy.config").toggle_use_relpath()
 	elseif cmd == "toggle openui" then
 		require("codecopy.config").toggle_openui()
 	elseif cmd == "toggle gist_to_clipboard" then
@@ -34,6 +36,7 @@ end, {
 			"toggle notify",
 			"toggle code_fence",
 			"toggle include_file_path",
+			"toggle relpath",
 			"toggle openui",
 			"toggle gist_to_clipboard",
 		}

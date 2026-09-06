@@ -6,6 +6,7 @@ local M = {}
 ---@field code_fence boolean
 ---@field notify boolean
 ---@field include_file_path boolean
+---@field use_relpath boolean
 ---@field debug boolean
 M.defaults = {
 	keymap = "<leader>cc",
@@ -13,6 +14,7 @@ M.defaults = {
 		openui = true,
 		code_fence = true,
 		include_file_path = false,
+		use_relpath = true,
 		gist_to_clipboard = false,
 	},
 	env = {
@@ -45,6 +47,13 @@ function M.toggle_include_file_path()
 	M.options.codecopy.include_file_path = not M.options.codecopy.include_file_path
 	if not M.options.messages.silent then
 		vim.notify("Include File Path: " .. (M.options.codecopy.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+	end
+end
+
+function M.toggle_use_relpath()
+	M.options.codecopy.use_relpath = not M.options.codecopy.use_relpath
+	if not M.options.messages.silent then
+		vim.notify("Use Relative Path: " .. (M.options.codecopy.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
 	end
 end
 
