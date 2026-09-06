@@ -239,7 +239,7 @@ function M.open()
 		else
 			filepath = state.data.file.path
 		end
-		set_lines(state.ui.sections.filepath_win.bufnr, filepath)
+		set_lines(state.ui.sections.filepath_win.bufnr, filepath or "")
 	end
 	if (state.data.message ~= nil) and (state.data.message ~= "") then
 		set_lines(state.ui.sections.message_win.bufnr, state.data.message)
