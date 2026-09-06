@@ -20,12 +20,10 @@ local function build_menu_items(integrations)
 				table.insert(items, NuiMenu.item(entry.name, entry))
 			else
 				if not options.messages.silent then
-					vim.notify("Invalid integration entry in evn.json: " .. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Config Warning:" })
+					vim.notify("Invalid integration entry in env.json: " .. vim.inspect(entry), vim.log.levels.WARN, { title = "CodeCopy Config Warning:" })
 				end
 			end
 		end
-	else
-		table.insert(items, NuiMenu.item("Discord via Webhook", { target = "discord_wh" }))
 	end
 	return items
 end
@@ -80,7 +78,6 @@ end
 ---Sets up state.data and builds the final code snippet.
 local function submit()
 	state.data.file.path = get_lines(state.ui.sections.filepath_win.bufnr)
-	state.data.file.name = vim.fn.fnamemodify(state.data.file.path, ":t")
 	state.data.clipboard = get_lines(state.ui.sections.code_win.bufnr, true)
 	state.data.message = get_lines(state.ui.sections.message_win.bufnr)
 
@@ -111,6 +108,9 @@ local function submit()
 end
 
 ---Builds the UI, Cleans and rebuilds if necessary.
+local function integration_msg()
+	return options.env.enabled and "Integrations:" or "Integrations: Disabled"
+end
 ---Sets state.ui
 local function build_ui()
 	cleanup()
@@ -120,7 +120,7 @@ local function build_ui()
 		border = {
 			style = "rounded",
 			text = {
-				top = " Integration ",
+				top = integration_msg(),
 				top_align = "center",
 			},
 			position = "50%",
@@ -193,18 +193,20 @@ function M.open()
 		return
 	end
 
-	-- Set up menu items.
-	local menu_items = {}
-	local integrations = internal.import_env(options.env.env_path)
-	for _, entry in ipairs(integrations) do
-		table.insert(
-			menu_items,
-			NuiMenu.item(entry.name, {
-				target = entry.target,
-				token = entry.token,
-			})
-		)
-	end
+	-- -- Set up menu items.
+	-- local menu_items = {}
+	-- local integrations = internal.import_env(options.env.env_path)
+	-- if integrations then
+	-- 	for _, entry in ipairs(integrations) do
+	-- 		table.insert(
+	-- 			menu_items,
+	-- 			NuiMenu.item(entry.name, {
+	-- 				target = entry.target,
+	-- 				token = entry.token,
+	-- 			})
+	-- 		)
+	-- 	end
+	-- end
 
 	if (not state.ui.layout) or (not next(state.ui.sections)) then
 		build_ui()
