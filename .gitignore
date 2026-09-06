@@ -1,15 +1,19 @@
-.log/
-*.log
-
-test.*
-
+# Environment & secrets
 .env
+.env.*
 env.json
 
-!.luacheckrc
-!.editorconfig
-!.gitignore
-!.github/
-!.github/**
-!.github/workflows/
-!.github/ISSUE_TEMPLATE/
+# Logs
+*.log
+.log/
+
+# Testing & CI artifacts
+.test-config/
+test.*
+
+# OS & Editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
