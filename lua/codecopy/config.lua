@@ -53,7 +53,7 @@ end
 function M.toggle_use_relpath()
 	M.options.codecopy.use_relpath = not M.options.codecopy.use_relpath
 	if not M.options.messages.silent then
-		vim.notify("Use Relative Path: " .. (M.options.codecopy.include_file_path and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
+		vim.notify("Use Relative Path: " .. (M.options.codecopy.use_relpath and "Enabled" or "Disabled"), vim.log.levels.INFO, { title = "CodeCopy Options:" })
 	end
 end
 
