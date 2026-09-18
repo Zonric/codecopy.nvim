@@ -47,9 +47,11 @@ Minimal:
 
 ```lua
 {
-		"https://gitlab.com/nullsyntax/codecopy.nvim.git",
-    event = "VeryLazy",
+		"Zonric/codecopy.nvim",
     dependencies = { "MunifTanjim/nui.nvim" },
+    opts = {
+      keymap = "<leader>cc",
+    },
 }
 ```
 
@@ -58,11 +60,11 @@ Unless you want to customize codecopy, none are needed.
 
 ```lua
 {
-		"https://gitlab.com/nullsyntax/codecopy.nvim.git",
+		"Zonric/codecopy.nvim",
     branch = "master",
     enabled = true,
     lazy = true,
-    event = "VeryLazy",
+    event = { "BufReadPost", "BufNewFile" },
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = { -- Default Configs
         -- sets Default keymap for ("codecopy.selection").copy()
