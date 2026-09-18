@@ -14,7 +14,8 @@ local M = {}
 
 ---@class FileMeta
 ---@field path string|nil     -- Absolute path to the source file
----@field name string|nil
+---@field relpath string|nil  -- Relitive path to project root
+---@field name string|nil     -- File name with extension
 ---@field ext string|nil      -- File extension (e.g., "py", "lua")
 ---@field lang string|nil     -- Language identifier (e.g., "python", "lua")
 
@@ -42,6 +43,7 @@ local M = {}
 M.data = {
 	file = {
 		path = nil,
+		relpath = nil,
 		name = nil,
 		ext = nil,
 		lang = nil,

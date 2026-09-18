@@ -31,7 +31,7 @@ Strives to be minimal, configurable, and fast.
 - 📦 Copy visual selection to clipboard
 - 💻 Wrap in code fences (e.g., \`\`\`lua )
 - 🪐 Share CodeCopy snippets to Discord, Gist, Slack, and Zulip using optional integrations.
-- 🗺️ Optional footer displaying file path ( _/loc/of/some/file.txt_ )
+- 🗺️ Optional footer displaying full or relative file paths ( _/loc/of/some/file.txt_ )
 - 🔔 Optional notifications: silent (none), notify (info), or go full debug
 - 🔧 User-configurable options and keymaps
 - ⚙️ Expandable dynamic language detection
@@ -76,6 +76,8 @@ Unless you want to customize codecopy, none are needed.
             code_fence = true,
             -- Include the file path after the markdown.
             include_file_path = false,
+            -- Use relative path, or full path if false.
+            use_relpath = true,
             -- You can have the url for the gist written to the clipboard
             gist_to_clipboard = false,
         },
@@ -238,6 +240,7 @@ The order of the list will determine how they are sorted in the integration list
 | CodeCopy toggle code_fence        | require("codecopy.config").toggle_code_fence()        | Toggle code block wrapping.                             |
 | CodeCopy toggle notify            | require("codecopy.config").toggle_notify()            | Toggle copy notifications.                              |
 | CodeCopy toggle include_file_path | require("codecopy.config").toggle_include_file_path() | Toggle displaying file path.                            |
+| CodeCopy toggle relpath           | require("codecopy.config").toggle_use_relpath()       | Toggle relative vs full file path.                      |
 | CodeCopy toggle debug             | require("codecopy.config").toggle_debug()             | Toggle debug notifications.                             |
 | CodeCopy toggle gist_to_clipboard | require("codecopy.config").toggle_gist_to_clipboard() | Toggle gist integration changing clipboard to gist url. |
 
